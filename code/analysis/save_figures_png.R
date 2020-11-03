@@ -1,4 +1,4 @@
-figsave_dir_sensitivity <- paste0("figures/s",parset,"_")
+figsave_dir_sensitivity <- paste0("figures/slopes/s",parset,"_")
 
 ggsave(fig_yale_florida_regression,file=paste0(figsave_dir_sensitivity,"yale_florida_regression.png"), width=8, height=5)
 ggsave(fig_yale_florida_residuals,file=paste0(figsave_dir_sensitivity,"yale_florida_residuals.png"), width=8, height=5)
@@ -14,9 +14,9 @@ ggsave(fig_t_onset_to_peak,file=paste0(figsave_dir_sensitivity,"t_onset_to_peak.
 ggsave(fig_t_peak_to_recovery,file=paste0(figsave_dir_sensitivity,"t_peak_to_recovery.png"), width=8, height=8)
 ggsave(fig_duration_of_infection,file=paste0(figsave_dir_sensitivity,"duration_of_infection.png"), width=8, height=8)
 ggsave(fig_sigma,file=paste0(figsave_dir_sensitivity,"sigma.png"), width=8, height=8)
-ggsave(fig_dpmean_withprior,file=paste0(figsave_dir_sensitivity,"dpmean_withprior.png"), width=8, height=5)
-ggsave(fig_wpmean_withprior,file=paste0(figsave_dir_sensitivity,"wpmean_withprior.png"), width=8, height=5)
-ggsave(fig_wrmean_withprior,file=paste0(figsave_dir_sensitivity,"wrmean_withprior.png"), width=8, height=5)
+# ggsave(fig_dpmean_withprior,file=paste0(figsave_dir_sensitivity,"dpmean_withprior.png"), width=8, height=5)
+# ggsave(fig_wpmean_withprior,file=paste0(figsave_dir_sensitivity,"wpmean_withprior.png"), width=8, height=5)
+# ggsave(fig_wrmean_withprior,file=paste0(figsave_dir_sensitivity,"wrmean_withprior.png"), width=8, height=5)
 ggsave(fig_dpmean,file=paste0(figsave_dir_sensitivity,"dpmean.png"), width=8, height=5)
 ggsave(fig_wpmean,file=paste0(figsave_dir_sensitivity,"wpmean.png"), width=8, height=5)
 ggsave(fig_wrmean,file=paste0(figsave_dir_sensitivity,"wrmean.png"), width=8, height=5)

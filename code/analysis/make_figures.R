@@ -130,103 +130,103 @@ fig_sigma <- with(as.list(prior_pars), {data.frame(sigma=params$sigma) %>%
 	labs(x="Process noise SD (Ct)", y="Density")
 	})
 
-if(current_pars[["symptom_treatment"]]=="split"){
-	fig_dpmean_withprior <- shared_params_df %>% 
-		mutate(dpmean_symp=dpmeanS) %>% 
-		mutate(dpmean_asymp=dpmeanA) %>% 
-		select(dpmean_symp, dpmean_asymp) %>% 
-		pivot_longer(everything()) %>% 
-		ggplot(aes(x=global_pars[["lod"]]-value)) + 
-			geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
-			geom_density(aes(col=name), adjust=2) + 
-			geom_line(data=make_normal_prior_df(mean=prior_pars$dpmean_prior, sd=prior_pars$dpsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
-			scale_x_continuous(limits=c(0,NA)) + 
-			scale_color_manual(values=c("dpmean_symp"="red","dpmean_asymp"="blue")) + 
-			scale_fill_manual(values=c("dpmean_symp"="red","dpmean_asymp"="blue")) + 
-			labs(x="Mean peak Ct", y="Density") + 
-			theme_minimal() + 
-			theme(legend.position="none", text=element_text(size=18)) + 
-			y_ticks_off + 
-			grid_off
-} else {
-	fig_dpmean_withprior <- shared_params_df %>% 
-		ggplot(aes(x=global_pars[["lod"]]-dpmean)) + 
-			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
-			geom_density(adjust=2) + 
-			geom_line(data=make_normal_prior_df(mean=prior_pars$dpmean_prior, sd=prior_pars$dpsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
-			scale_x_continuous(limits=c(0,NA)) + 
-			labs(x="Mean peak Ct", y="Density") + 
-			theme_minimal() + 
-			theme(legend.position="none", text=element_text(size=18)) + 
-			y_ticks_off + 
-			grid_off
-}
+# if(current_pars[["symptom_treatment"]]=="split"){
+# 	fig_dpmean_withprior <- shared_params_df %>% 
+# 		mutate(dpmean_symp=dpmeanS) %>% 
+# 		mutate(dpmean_asymp=dpmeanA) %>% 
+# 		select(dpmean_symp, dpmean_asymp) %>% 
+# 		pivot_longer(everything()) %>% 
+# 		ggplot(aes(x=global_pars[["lod"]]-value)) + 
+# 			geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
+# 			geom_density(aes(col=name), adjust=2) + 
+# 			geom_line(data=make_normal_prior_df(mean=prior_pars$dpmean_prior, sd=prior_pars$dpsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
+# 			scale_x_continuous(limits=c(0,NA)) + 
+# 			scale_color_manual(values=c("dpmean_symp"="red","dpmean_asymp"="blue")) + 
+# 			scale_fill_manual(values=c("dpmean_symp"="red","dpmean_asymp"="blue")) + 
+# 			labs(x="Mean peak Ct", y="Density") + 
+# 			theme_minimal() + 
+# 			theme(legend.position="none", text=element_text(size=18)) + 
+# 			y_ticks_off + 
+# 			grid_off
+# } else {
+# 	fig_dpmean_withprior <- shared_params_df %>% 
+# 		ggplot(aes(x=global_pars[["lod"]]-dpmean)) + 
+# 			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
+# 			geom_density(adjust=2) + 
+# 			geom_line(data=make_normal_prior_df(mean=prior_pars$dpmean_prior, sd=prior_pars$dpsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
+# 			scale_x_continuous(limits=c(0,NA)) + 
+# 			labs(x="Mean peak Ct", y="Density") + 
+# 			theme_minimal() + 
+# 			theme(legend.position="none", text=element_text(size=18)) + 
+# 			y_ticks_off + 
+# 			grid_off
+# }
 
 
-if(current_pars[["symptom_treatment"]]=="split"){
-	fig_wpmean_withprior <- shared_params_df %>% 
-		mutate(wpmean_symp=wpmeanS) %>% 
-		mutate(wpmean_asymp=wpmeanA) %>% 
-		select(wpmean_symp, wpmean_asymp) %>% 
-		pivot_longer(everything()) %>% 
-		ggplot(aes(x=value)) + 
-			geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
-			geom_density(aes(col=name), adjust=2) + 
-			geom_line(data=make_normal_prior_df(mean=prior_pars$wpmean_prior, sd=prior_pars$wpsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
-			scale_x_continuous(limits=c(0,NA)) + 
-			scale_color_manual(values=c("wpmean_symp"="red","wpmean_asymp"="blue")) + 
-			scale_fill_manual(values=c("wpmean_symp"="red","wpmean_asymp"="blue")) + 
-			labs(x="Mean proliferation stage duration (days)", y="Density") + 
-			theme_minimal() + 
-			theme(legend.position="none", text=element_text(size=18)) + 
-			y_ticks_off + 
-			grid_off
-	} else {
-	fig_wpmean_withprior <- shared_params_df %>% 
-		ggplot(aes(x=wpmean)) + 
-			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
-			geom_density(adjust=2) + 
-			geom_line(data=make_normal_prior_df(mean=prior_pars$wpmean_prior, sd=prior_pars$wpsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
-			scale_x_continuous(limits=c(0,NA)) + 
-			labs(x="Mean proliferation stage duration (days)", y="Density") + 
-			theme_minimal() + 
-			theme(legend.position="none", text=element_text(size=18)) + 
-			y_ticks_off + 
-			grid_off
-	}
+# if(current_pars[["symptom_treatment"]]=="split"){
+# 	fig_wpmean_withprior <- shared_params_df %>% 
+# 		mutate(wpmean_symp=wpmeanS) %>% 
+# 		mutate(wpmean_asymp=wpmeanA) %>% 
+# 		select(wpmean_symp, wpmean_asymp) %>% 
+# 		pivot_longer(everything()) %>% 
+# 		ggplot(aes(x=value)) + 
+# 			geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
+# 			geom_density(aes(col=name), adjust=2) + 
+# 			geom_line(data=make_normal_prior_df(mean=prior_pars$wpmean_prior, sd=prior_pars$wpsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
+# 			scale_x_continuous(limits=c(0,NA)) + 
+# 			scale_color_manual(values=c("wpmean_symp"="red","wpmean_asymp"="blue")) + 
+# 			scale_fill_manual(values=c("wpmean_symp"="red","wpmean_asymp"="blue")) + 
+# 			labs(x="Mean proliferation stage duration (days)", y="Density") + 
+# 			theme_minimal() + 
+# 			theme(legend.position="none", text=element_text(size=18)) + 
+# 			y_ticks_off + 
+# 			grid_off
+# 	} else {
+# 	fig_wpmean_withprior <- shared_params_df %>% 
+# 		ggplot(aes(x=wpmean)) + 
+# 			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
+# 			geom_density(adjust=2) + 
+# 			geom_line(data=make_normal_prior_df(mean=prior_pars$wpmean_prior, sd=prior_pars$wpsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
+# 			scale_x_continuous(limits=c(0,NA)) + 
+# 			labs(x="Mean proliferation stage duration (days)", y="Density") + 
+# 			theme_minimal() + 
+# 			theme(legend.position="none", text=element_text(size=18)) + 
+# 			y_ticks_off + 
+# 			grid_off
+# 	}
 
 
-if(current_pars[["symptom_treatment"]]=="split"){
-	fig_wrmean_withprior <- shared_params_df %>% 
-		mutate(wrmean_symp=wrmeanS) %>% 
-		mutate(wrmean_asymp=wrmeanA) %>% 
-		select(wrmean_symp, wrmean_asymp) %>% 
-		pivot_longer(everything()) %>% 
-		ggplot(aes(x=value)) + 
-			geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
-			geom_density(aes(col=name), adjust=2) + 
-			geom_line(data=make_normal_prior_df(mean=prior_pars$wrmean_prior, sd=prior_pars$wrsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
-			scale_x_continuous(limits=c(0,NA)) + 
-			scale_color_manual(values=c("wrmean_symp"="red","wrmean_asymp"="blue")) + 
-			scale_fill_manual(values=c("wrmean_symp"="red","wrmean_asymp"="blue")) + 
-			labs(x="Mean clearance stage duration (days)", y="Density") + 
-			theme_minimal() + 
-			theme(legend.position="none", text=element_text(size=18)) + 
-			y_ticks_off + 
-			grid_off
-	} else {
-	fig_wrmean_withprior <- shared_params_df %>% 
-		ggplot(aes(x=wrmean)) + 
-			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
-			geom_density(adjust=2) + 
-			geom_line(data=make_normal_prior_df(mean=prior_pars$wrmean_prior, sd=prior_pars$wrsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
-			scale_x_continuous(limits=c(0,NA)) + 
-			labs(x="Mean clearance stage duration (days)", y="Density") + 
-			theme_minimal() + 
-			theme(legend.position="none", text=element_text(size=18)) + 
-			y_ticks_off + 
-			grid_off
-		}
+# if(current_pars[["symptom_treatment"]]=="split"){
+# 	fig_wrmean_withprior <- shared_params_df %>% 
+# 		mutate(wrmean_symp=wrmeanS) %>% 
+# 		mutate(wrmean_asymp=wrmeanA) %>% 
+# 		select(wrmean_symp, wrmean_asymp) %>% 
+# 		pivot_longer(everything()) %>% 
+# 		ggplot(aes(x=value)) + 
+# 			geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
+# 			geom_density(aes(col=name), adjust=2) + 
+# 			geom_line(data=make_normal_prior_df(mean=prior_pars$wrmean_prior, sd=prior_pars$wrsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
+# 			scale_x_continuous(limits=c(0,NA)) + 
+# 			scale_color_manual(values=c("wrmean_symp"="red","wrmean_asymp"="blue")) + 
+# 			scale_fill_manual(values=c("wrmean_symp"="red","wrmean_asymp"="blue")) + 
+# 			labs(x="Mean clearance stage duration (days)", y="Density") + 
+# 			theme_minimal() + 
+# 			theme(legend.position="none", text=element_text(size=18)) + 
+# 			y_ticks_off + 
+# 			grid_off
+# 	} else {
+# 	fig_wrmean_withprior <- shared_params_df %>% 
+# 		ggplot(aes(x=wrmean)) + 
+# 			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
+# 			geom_density(adjust=2) + 
+# 			geom_line(data=make_normal_prior_df(mean=prior_pars$wrmean_prior, sd=prior_pars$wrsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
+# 			scale_x_continuous(limits=c(0,NA)) + 
+# 			labs(x="Mean clearance stage duration (days)", y="Density") + 
+# 			theme_minimal() + 
+# 			theme(legend.position="none", text=element_text(size=18)) + 
+# 			y_ticks_off + 
+# 			grid_off
+# 		}
 
 
 if(current_pars[["symptom_treatment"]]=="split"){
