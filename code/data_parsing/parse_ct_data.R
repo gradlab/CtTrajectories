@@ -4,7 +4,7 @@
 
 library(tidyverse) 
 
-ct_dat_clean <- read.csv("data/ct_dat_clean_new.csv", stringsAsFactors=FALSE) %>% as_tibble()
+ct_dat_clean <- read.csv("data/ct_dat_clean.csv", stringsAsFactors=FALSE) %>% as_tibble()
 
 # Visualize a regression of Yale values on Florida values: 
 fig_yale_florida_regression <- ct_dat_clean %>% 
