@@ -18,6 +18,8 @@ ct_fit <- sampling(ct_model,
 		tpsd=as.list(prior_pars)$tpsd,
 		dpmean_prior=as.list(prior_pars)$dpmean_prior,
 		dpsd_prior=as.list(prior_pars)$dpsd_prior,
+		wpmax=as.list(prior_pars)$wpmax,
+		wrmax=as.list(prior_pars)$wrmax,
 		apmean_prior=as.list(prior_pars)$apmean_prior,
 		apsd_prior=as.list(prior_pars)$apsd_prior,
 		armean_prior=as.list(prior_pars)$armean_prior,
@@ -27,8 +29,8 @@ ct_fit <- sampling(ct_model,
 		lambda=as.list(prior_pars)$lambda,
 		fpmean=as.list(prior_pars)$fpmean,
 		epsilon=(indiv_data$adjusted)*(as.list(global_pars)$adjusted_sd)), 
-	iter=1000, chains=4)
-# , control = list(adapt_delta=0.99)
+	iter=2000, chains=4 , control = list(adapt_delta=0.99))
+
 fit_endq <- Sys.time()
 print(paste0("Fit time: ",difftime(fit_endq, fit_startq, units="min")," mins"))
 

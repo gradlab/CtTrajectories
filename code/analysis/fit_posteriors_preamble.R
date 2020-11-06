@@ -61,6 +61,8 @@ prior_pars <- with(as.list(current_pars),{
 	tpsd=2,
 	dpmean_prior=global_pars[["lod"]]/2,
 	dpsd_prior=global_pars[["lod"]]/6,
+	wpmax=14,
+	wrmax=30,
 	apmean_prior=5,
 	apsd_prior=3,
 	armean_prior=-5,

@@ -24,6 +24,8 @@ data {
   real<lower=0> tpsd;         // Prior sd for the onset time (days)
   real<lower=0> dpmean_prior; // Prior mean peak Ct (delta from lod)
   real<lower=0> dpsd_prior;   // Prior sd peak Ct (delta from lod)
+  real<lower=0> wpmax;
+  real<lower=0> wrmax;
   real<lower=0> apmean_prior; // Prior mean proliferation duration
   real<lower=0> apsd_prior;   // Prior sd proliferation duration
   real<upper=0> armean_prior; // Prior mean clearance duration 
@@ -64,12 +66,12 @@ transformed data {
 parameters {
 
   real<lower=0, upper=lod> dpmeanS;   // Poplation peak Ct drop mean
-  real<lower=0> apmeanS;              // Population onset-to-peak slope
-  real<upper=0> armeanS;              // Population peak-to-recovery slope 
+  real<lower=dpmeanS/wpmax> apmeanS;              // Population onset-to-peak slope
+  real<upper=-dpmeanS/wrmax> armeanS;              // Population peak-to-recovery slope 
 
   real<lower=0, upper=lod> dpmeanA;   // Poplation peak Ct drop mean
-  real<lower=0> apmeanA;              // Population onset-to-peak slope
-  real<upper=0> armeanA;              // Population peak-to-recovery slope 
+  real<lower=dpmeanA/wpmax> apmeanA;              // Population onset-to-peak slope
+  real<upper=-dpmeanA/wrmax> armeanA;              // Population peak-to-recovery slope 
 
   real<lower=0> dpsd;          // Poplation peak Ct drop sd
   real<lower=0> apsd;          // Population onset-to-peak time sd
@@ -77,8 +79,10 @@ parameters {
 
   real tp[n_id];                        // Peak time
   real<lower=0, upper=lod> dp[n_id];    // Peak Ct drop
-  real<lower=0> ap[n_id];               // Proliferation slope
-  real<upper=0> ar[n_id];               // Clearance slope
+
+
+  real<lower=0> aptilde[n_id];               // Proliferation slope
+  real<upper=0> artilde[n_id];               // Clearance slope
   
   real<lower=0, upper=sigma_max> sigma;    // Process noise during infection
 }
@@ -94,15 +98,23 @@ transformed parameters {
   real<lower=0> wp[n_id];  // Onset-to-peak time
   real<lower=0> wr[n_id];  // Peak-to-recovery time 
 
+  real<lower=0> ap[n_id];  // Proliferation slope
+  real<upper=0> ar[n_id];  // Clearance slope
+
   real process_sd[N];      // Process noise
   real mu[N];              // Mean Ct trajectory
-  
 
   wpmeanS = dpmeanS/apmeanS;
   wrmeanS = -dpmeanS/armeanS;
 
   wpmeanA = dpmeanA/apmeanA;
   wrmeanA = -dpmeanA/armeanA;
+
+  for(i in 1:n_id){
+    ap[i] = aptilde[i] + dp[i]/wpmax;
+    ar[i] = artilde[i] - dp[i]/wrmax;
+  }
+  // No Jacobian adjustment needed since wpmax and wrmax are constants; see https://mc-stan.org/docs/2_25/stan-users-guide/vectors-with-varying-bounds.html
 
   for(i in 1:n_id){
     wp[i] = dp[i]/ap[i];                // Proliferation duration
@@ -121,11 +133,11 @@ model {
   dpmeanS ~ normal(dpmean_prior,dpsd_prior) T[0,lod];
   dpmeanA ~ normal(dpmean_prior,dpsd_prior) T[0,lod];
   
-  apmeanS ~ normal(apmean_prior, apsd_prior) T[0,];
-  apmeanA ~ normal(apmean_prior, apsd_prior) T[0,];
+  apmeanS ~ normal(apmean_prior, apsd_prior) T[dpmeanS/wpmax,];
+  apmeanA ~ normal(apmean_prior, apsd_prior) T[dpmeanA/wpmax,];
 
-  armeanS ~ normal(armean_prior, arsd_prior) T[,0];
-  armeanA ~ normal(armean_prior, arsd_prior) T[,0];
+  armeanS ~ normal(armean_prior, arsd_prior) T[,-dpmeanS/wrmax];
+  armeanA ~ normal(armean_prior, arsd_prior) T[,-dpmeanA/wrmax];
 
   dpsd ~ cauchy(0,dpcauchypriorscale) T[0,];
   apsd ~ cauchy(0,5) T[0,];
@@ -138,12 +150,12 @@ model {
   for(i in 1:n_id){
     if(symp[i] == 1){
       dp[i] ~ normal(dpmeanS, dpsd) T[0, lod];
-      ap[i] ~ normal(apmeanS, apsd) T[0,];
-      ar[i] ~ normal(armeanS, arsd) T[,0];
+      ap[i] ~ normal(apmeanS, apsd) T[dp[i]/wpmax,];
+      ar[i] ~ normal(armeanS, arsd) T[,-dp[i]/wrmax];
       } else {
       dp[i] ~ normal(dpmeanA, dpsd) T[0, lod];
-      ap[i] ~ normal(apmeanA, apsd) T[0,];
-      ar[i] ~ normal(armeanA, arsd) T[,0];
+      ap[i] ~ normal(apmeanA, apsd) T[dp[i]/wpmax,];
+      ar[i] ~ normal(armeanA, arsd) T[,-dp[i]/wrmax];
       }
   } 
 

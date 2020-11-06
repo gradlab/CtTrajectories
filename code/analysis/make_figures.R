@@ -685,8 +685,6 @@ make_sample_trajectory_symp <- function(shared_params_df, global_pars, siglevel=
 }
 
 
-
-
 make_sample_trajectory <- function(shared_params_df, global_pars, siglevel=0.9){
 	# For asymptomatic:
 	with(as.list(global_pars),{
@@ -750,3 +748,17 @@ if(current_pars[["symptom_treatment"]]=="split"){
 	fig_ct_trajectory_inference <- make_sample_trajectory(shared_params_df, global_pars)
 	}
 
+
+# dev.new()
+# params_df %>% 
+# 	ggplot(aes(x=tp, y=wr)) + 
+# 		geom_point(size=0.05, alpha=0.5) + 
+# 		theme_minimal() + 
+# 		facet_wrap(~id) 
+
+# dev.new()
+# params_df %>% 
+# 	ggplot(aes(x=tp, y=ar)) + 
+# 		geom_point(size=0.05, alpha=0.5) + 
+# 		theme_minimal() + 
+# 		facet_wrap(~id) 
