@@ -14,7 +14,7 @@ source("code/data_parsing/parse_Ct_data.R")
 # Generate essential values: 
 source("code/analysis/set_global_pars.R")
 
-# Generate and ave the posteriors: 
+# Generate and save the posteriors: 
 for(parset in 1:length(masterpars)){ #
 
 	print(paste0("STARTING PARSET ",parset," OF ",length(masterpars)))
@@ -32,8 +32,8 @@ for(parset in 1:length(masterpars)){ #
 	# # Generate outputs (key figures, best-fit dists)
 	source('code/analysis/make_figures.R')
 	# # Save the figures
-	source('code/analysis/save_figures.R')
-	source('code/analysis/save_figures_png.R')
+	# source('code/analysis/save_figures.R')
+	# source('code/analysis/save_figures_png.R')
 
 	final_fitlist[[parset]] <- ct_fit
 
