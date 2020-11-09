@@ -675,7 +675,7 @@ make_sample_trajectory_symp <- function(shared_params_df, global_pars, siglevel=
 		coord_cartesian(ylim=c(20,40), expand=FALSE) + 
 		theme_minimal() + 
 		labs(x="Days from peak", y="Ct") + 
-		scale_y_reverse() + 
+		scale_y_continuous(trans="reverse") + 
 		theme(text=element_text(size=18))
 
 	return(out)
@@ -734,7 +734,7 @@ make_sample_trajectory <- function(shared_params_df, global_pars, siglevel=0.9){
 		coord_cartesian(ylim=c(20,40), expand=FALSE) + 
 		theme_minimal() + 
 		labs(x="Days from peak", y="Ct") + 
-		scale_y_reverse() + 
+		scale_y_continuous(trans="reverse") + 
 		theme(text=element_text(size=18))
 
 	return(out)

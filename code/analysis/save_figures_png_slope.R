@@ -1,4 +1,4 @@
-figsave_dir_sensitivity <- paste0("figures/s",parset,"_")
+figsave_dir_sensitivity <- paste0("figures/slopes_2/s",parset,"_")
 
 ggsave(fig_yale_florida_regression,file=paste0(figsave_dir_sensitivity,"yale_florida_regression.png"), width=8, height=5)
 ggsave(fig_yale_florida_residuals,file=paste0(figsave_dir_sensitivity,"yale_florida_residuals.png"), width=8, height=5)

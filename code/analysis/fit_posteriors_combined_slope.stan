@@ -122,8 +122,8 @@ model {
 
   // Hierarchical priors:
   dpmean ~ normal(dpmean_prior,dpsd_prior) T[0,lod];
-  apmean ~ normal(apmean_prior, apsd_prior) T[dpmeanS/wpmax,];
-  armean ~ normal(armean_prior, arsd_prior) T[,-dpmeanS/wrmax];
+  apmean ~ normal(apmean_prior, apsd_prior) T[dpmean/wpmax,];
+  armean ~ normal(armean_prior, arsd_prior) T[,-dpmean/wrmax];
 
   dpsd ~ cauchy(0,dpcauchypriorscale) T[0,];
   apsd ~ cauchy(0,5) T[0,];

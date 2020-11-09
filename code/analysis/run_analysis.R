@@ -15,7 +15,7 @@ source("code/data_parsing/parse_Ct_data.R")
 source("code/analysis/set_global_pars.R")
 
 # Generate and save the posteriors: 
-for(parset in 1:length(masterpars)){ #
+for(parset in 3:4){ #length(masterpars)
 
 	print(paste0("STARTING PARSET ",parset," OF ",length(masterpars)))
 
