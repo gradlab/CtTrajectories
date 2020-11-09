@@ -31,18 +31,19 @@ for(parset in 1:length(masterpars)){ #
 		source('code/analysis/fit_posteriors_preamble.R') 
 		source('code/analysis/fit_posteriors.R') 	
 		source('code/analysis/make_figures.R')
-		
+		source('code/analysis/save_figures.R')
+		source('code/analysis/save_figures_png.R')
+
 	} else if(current_pars[["parametrization"]]=="slope"){
-		
+
 		source('code/analysis/fit_posteriors_preamble_slope.R') 
 		source('code/analysis/fit_posteriors_slope.R') 	
 		source('code/analysis/make_figures_slope.R')
-		
+		source('code/analysis/save_figures_slope.R')
+		source('code/analysis/save_figures_png_slope.R')
 	}	
 		
 	# # Save the figures
-	# source('code/analysis/save_figures.R')
-	# source('code/analysis/save_figures_png.R')
 
 	final_fitlist[[parset]] <- ct_fit
 

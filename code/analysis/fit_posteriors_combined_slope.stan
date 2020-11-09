@@ -24,12 +24,12 @@ data {
   real<lower=0> tpsd;         // Prior sd for the onset time (days)
   real<lower=0> dpmean_prior; // Prior mean peak Ct (delta from lod)
   real<lower=0> dpsd_prior;   // Prior sd peak Ct (delta from lod)
-  real<lower=0> wpmax;        // Max proliferation duration
-  real<lower=0> wpmean_prior; // Prior mean proliferation duration
-  real<lower=0> wpsd_prior;   // Prior sd proliferation duration
-  real<lower=0> wrmax;        // Prior max clearance duration
-  real<lower=0> wrmean_prior; // Prior mean clearance duration 
-  real<lower=0> wrsd_prior;   // Prior sd clearance duration 
+  real<lower=0> wpmax;
+  real<lower=0> wrmax;
+  real<lower=0> apmean_prior; // Prior mean proliferation duration
+  real<lower=0> apsd_prior;   // Prior sd proliferation duration
+  real<upper=0> armean_prior; // Prior mean clearance duration 
+  real<lower=0> arsd_prior;   // Prior sd clearance duration 
   real<lower=0> sigma_max;    // Max allowable value for observation noise
   real<lower=0> sigma_prior_scale;  // Prior observation noise Cauchy scale
   real<lower=0, upper=1> lambda; // Mixture probability (~1-sensitivity)
@@ -44,8 +44,8 @@ transformed data {
   real log1mlambda;
 
   real dpcauchypriorscale;
-  real wpcauchypriorscale;
-  real wrcauchypriorscale;
+  // real wpcauchypriorscale;
+  // real wrcauchypriorscale;
 
   // real sigma;
 
@@ -58,60 +58,86 @@ transformed data {
 
   // Define cauchy prior scales so thatt 90% of the half-distribution mass lies below the max cutoff for that parameter. 
   dpcauchypriorscale = lod/tan(pi()*(0.95-0.5));
-  wpcauchypriorscale = wpmax/tan(pi()*(0.95-0.5));
-  wrcauchypriorscale = wrmax/tan(pi()*(0.95-0.5));
+  // wpcauchypriorscale = wpmax/tan(pi()*(0.95-0.5));
+  // wrcauchypriorscale = wrmax/tan(pi()*(0.95-0.5));
 
 }
 
 parameters {
 
-  real<lower=0, upper=lod> dpmean;    // Poplation peak Ct drop mean
-  real<lower=0, upper=wpmax> wpmean;  // Population onset-to-peak time mean
-  real<lower=0, upper=wrmax> wrmean;  // Population peak-to-recovery time mean 
+  real<lower=0, upper=lod> dpmean;   // Poplation peak Ct drop mean
+  real<lower=dpmean/wpmax> apmean;              // Population onset-to-peak slope
+  real<upper=-dpmean/wrmax> armean;              // Population peak-to-recovery slope 
 
   real<lower=0> dpsd;          // Poplation peak Ct drop sd
-  real<lower=0> wpsd;          // Population onset-to-peak time sd
-  real<lower=0> wrsd;          // Population peak-to-recovery time sd
+  real<lower=0> apsd;          // Population onset-to-peak time sd
+  real<lower=0> arsd;          // Population peak-to-recovery time sd
 
   real tp[n_id];                        // Peak time
   real<lower=0, upper=lod> dp[n_id];    // Peak Ct drop
-  real<lower=0, upper=wpmax> wp[n_id];  // Onset-to-peak time
-  real<lower=0, upper=wrmax> wr[n_id];  // Peak-to-recovery time 
 
+
+  real<lower=0> aptilde[n_id];               // Proliferation slope
+  real<upper=0> artilde[n_id];               // Clearance slope
+  
   real<lower=0, upper=sigma_max> sigma;    // Process noise during infection
 }
 
 transformed parameters {
-  real process_sd[N];
-  real mu[N];
-  
+
+  real<lower=0> wpmean;
+  real<lower=0> wrmean;
+
+  real<lower=0> wp[n_id];  // Onset-to-peak time
+  real<lower=0> wr[n_id];  // Peak-to-recovery time 
+
+  real<lower=0> ap[n_id];  // Proliferation slope
+  real<upper=0> ar[n_id];  // Clearance slope
+
+  real process_sd[N];      // Process noise
+  real mu[N];              // Mean Ct trajectory
+
+  wpmean = dpmean/apmean;
+  wrmean = -dpmean/armean;
+
+  for(i in 1:n_id){
+    ap[i] = aptilde[i] + dp[i]/wpmax;
+    ar[i] = artilde[i] - dp[i]/wrmax;
+  }
+  // No Jacobian adjustment needed since wpmax and wrmax are constants; see https://mc-stan.org/docs/2_25/stan-users-guide/vectors-with-varying-bounds.html
+
+  for(i in 1:n_id){
+    wp[i] = dp[i]/ap[i];                // Proliferation duration
+    wr[i] = -dp[i]/ar[i];               // Clearance duration
+  }
+
   for(i in 1:N){
     mu[i]=mufun(t[i], tp[id[i]], wp[id[i]], wr[id[i]], dp[id[i]]);
     process_sd[i]=sqrt((sigma*sigma) + (epsilon[i]*epsilon[i]));
   };
 }
 
+
 model {
 
   // Hierarchical priors:
-
-  dpmean ~ normal(dpmean_prior,dpsd_prior) T[0,lod];    
-  wpmean ~ normal(wpmean_prior, wpsd_prior) T[0,wpmax];
-  wrmean ~ normal(wrmean_prior, wrsd_prior) T[0,wrmax];
+  dpmean ~ normal(dpmean_prior,dpsd_prior) T[0,lod];
+  apmean ~ normal(apmean_prior, apsd_prior) T[dpmeanS/wpmax,];
+  armean ~ normal(armean_prior, arsd_prior) T[,-dpmeanS/wrmax];
 
   dpsd ~ cauchy(0,dpcauchypriorscale) T[0,];
-  wpsd ~ cauchy(0,wpcauchypriorscale) T[0,];
-  wrsd ~ cauchy(0,wrcauchypriorscale) T[0,];  
+  apsd ~ cauchy(0,5) T[0,];
+  arsd ~ cauchy(0,5) T[0,];  
 
   sigma ~ cauchy(0,sigma_prior_scale) T[0,10];
 
   // Individual parameter specifications:
   tp ~ normal(0,tpsd);
   for(i in 1:n_id){
-    dp[i] ~ normal(dpmean, dpsd) T[0, lod];
-    wp[i] ~ normal(wpmean, wpsd) T[0, wpmax];
-    wr[i] ~ normal(wrmean, wrsd) T[0, wrmax];
-  }
+      dp[i] ~ normal(dpmean, dpsd) T[0, lod];
+      ap[i] ~ normal(apmean, apsd) T[dp[i]/wpmax,];
+      ar[i] ~ normal(armean, arsd) T[,-dp[i]/wrmax];
+  } 
 
   // Main model specification: 
   for(i in 1:N){
