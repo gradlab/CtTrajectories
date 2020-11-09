@@ -672,10 +672,10 @@ make_sample_trajectory_symp <- function(shared_params_df, global_pars, siglevel=
 				yvals_upr=yvals_upr_clearance_S),
 			aes(x=xvals, ymin=lod-yvals_lwr, ymax=lod-yvals_upr), alpha=0.2, fill="red") + 
 		geom_segment(aes(x=0,xend=wr_mean_S,y=lod-dp_mean_S,yend=lod),col="red") + 
-		coord_cartesian(ylim=c(20,40), expand=FALSE) + 
+		coord_cartesian(ylim=c(40,20), expand=FALSE) + 
 		theme_minimal() + 
 		labs(x="Days from peak", y="Ct") + 
-		scale_y_continuous(trans="reverse") + 
+		scale_y_reverse() + 
 		theme(text=element_text(size=18))
 
 	return(out)
@@ -683,8 +683,6 @@ make_sample_trajectory_symp <- function(shared_params_df, global_pars, siglevel=
 	})
 
 }
-
-
 
 
 make_sample_trajectory <- function(shared_params_df, global_pars, siglevel=0.9){
@@ -731,10 +729,10 @@ make_sample_trajectory <- function(shared_params_df, global_pars, siglevel=0.9){
 				yvals_upr=yvals_upr_clearance),
 			aes(x=xvals, ymin=lod-yvals_lwr, ymax=lod-yvals_upr), alpha=0.2, fill="grey") + 
 		geom_segment(aes(x=0,xend=wr_mean,y=lod-dp_mean,yend=lod),col="black") + 
-		coord_cartesian(ylim=c(20,40), expand=FALSE) + 
+		coord_cartesian(ylim=c(40,20), expand=FALSE) + 
 		theme_minimal() + 
 		labs(x="Days from peak", y="Ct") + 
-		scale_y_continuous(trans="reverse") + 
+		scale_y_reverse() + 
 		theme(text=element_text(size=18))
 
 	return(out)
