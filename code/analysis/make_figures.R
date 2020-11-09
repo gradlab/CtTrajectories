@@ -44,7 +44,7 @@ figlist_ct_dat_refined <- with(as.list(global_pars),{
 		scale_color_manual(values=c("Acute"="red", "Persistent"="black")) + 
 		theme_minimal() + 
 		theme(text=element_text(size=14), legend.title=element_blank(), legend.position="none") + 
-		labs(x="Days since first sample", y="Ct") + 
+		labs(x="Days since min. observed Ct", y="Ct") + 
 		facet_wrap(~Person.ID))
 	})
 

@@ -44,7 +44,7 @@ figlist_ct_dat_refined <- with(as.list(global_pars),{
 		scale_color_manual(values=c("Acute"="red", "Persistent"="black")) + 
 		theme_minimal() + 
 		theme(text=element_text(size=14), legend.title=element_blank(), legend.position="none") + 
-		labs(x="Days since first sample", y="Ct") + 
+		labs(x="Days since min. observed Ct", y="Ct") + 
 		facet_wrap(~Person.ID))
 	})
 
@@ -228,128 +228,128 @@ fig_sigma <- with(as.list(prior_pars), {data.frame(sigma=params$sigma) %>%
 # 			grid_off
 # 		}
 
-# if(current_pars[["symptom_treatment"]]=="split"){
-# 	fig_dpmean <- shared_params_df %>% 
-# 		mutate(dpmean_symp=dpmeanS) %>% 
-# 		mutate(dpmean_asymp=dpmeanA) %>% 
-# 		select(dpmean_symp, dpmean_asymp) %>% 
-# 		pivot_longer(everything()) %>% 
-# 		ggplot(aes(x=global_pars[["lod"]]-value)) + 
-# 			geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
-# 			geom_density(aes(col=name), adjust=2) + 
-# 			# scale_x_continuous(limits=c(0,NA)) + 
-# 			scale_color_manual(values=c("dpmean_symp"="red","dpmean_asymp"="blue")) + 
-# 			scale_fill_manual(values=c("dpmean_symp"="red","dpmean_asymp"="blue")) + 
-# 			labs(x="Mean peak Ct", y="Density") + 
-# 			theme_minimal() + 
-# 			theme(legend.position="none", text=element_text(size=18)) + 
-# 			y_ticks_off + 
-# 			grid_off
-# 	} else{
-# 	fig_dpmean <- shared_params_df %>% 
-# 		ggplot(aes(x=global_pars[["lod"]]-dpmean)) + 
-# 			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
-# 			geom_density(adjust=2) + 
-# 			# scale_x_continuous(limits=c(0,NA)) + 
-# 			labs(x="Mean peak Ct", y="Density") + 
-# 			theme_minimal() + 
-# 			theme(legend.position="none", text=element_text(size=18)) + 
-# 			y_ticks_off + 
-# 			grid_off
-# 		}
+if(current_pars[["symptom_treatment"]]=="split"){
+	fig_dpmean <- shared_params_df %>% 
+		mutate(dpmean_symp=dpmeanS) %>% 
+		mutate(dpmean_asymp=dpmeanA) %>% 
+		select(dpmean_symp, dpmean_asymp) %>% 
+		pivot_longer(everything()) %>% 
+		ggplot(aes(x=global_pars[["lod"]]-value)) + 
+			geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
+			geom_density(aes(col=name), adjust=2) + 
+			# scale_x_continuous(limits=c(0,NA)) + 
+			scale_color_manual(values=c("dpmean_symp"="red","dpmean_asymp"="blue")) + 
+			scale_fill_manual(values=c("dpmean_symp"="red","dpmean_asymp"="blue")) + 
+			labs(x="Mean peak Ct", y="Density") + 
+			theme_minimal() + 
+			theme(legend.position="none", text=element_text(size=18)) + 
+			y_ticks_off + 
+			grid_off
+	} else{
+	fig_dpmean <- shared_params_df %>% 
+		ggplot(aes(x=global_pars[["lod"]]-dpmean)) + 
+			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
+			geom_density(adjust=2) + 
+			# scale_x_continuous(limits=c(0,NA)) + 
+			labs(x="Mean peak Ct", y="Density") + 
+			theme_minimal() + 
+			theme(legend.position="none", text=element_text(size=18)) + 
+			y_ticks_off + 
+			grid_off
+		}
 
-# if(current_pars[["symptom_treatment"]]=="split"){
-# 	fig_wpmean <- shared_params_df %>% 
-# 		mutate(wpmean_symp=wpmeanS) %>% 
-# 		mutate(wpmean_asymp=wpmeanA) %>% 
-# 		select(wpmean_symp, wpmean_asymp) %>% 
-# 		pivot_longer(everything()) %>% 
-# 		ggplot(aes(x=value)) + 
-# 			geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
-# 			geom_density(aes(col=name), adjust=2) + 
-# 			# scale_x_continuous(limits=c(0,NA)) + 
-# 			scale_color_manual(values=c("wpmean_symp"="red","wpmean_asymp"="blue")) + 
-# 			scale_fill_manual(values=c("wpmean_symp"="red","wpmean_asymp"="blue")) + 
-# 			labs(x="Mean proliferation stage duration (days)", y="Density") + 
-# 			theme_minimal() + 
-# 			theme(legend.position="none", text=element_text(size=18)) + 
-# 			y_ticks_off + 
-# 			grid_off
-# 	} else {
-# 	fig_wpmean <- shared_params_df %>% 
-# 		ggplot(aes(x=wpmean)) + 
-# 			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
-# 			geom_density(adjust=2) + 
-# 			# scale_x_continuous(limits=c(0,NA)) + 
-# 			labs(x="Mean proliferation stage duration (days)", y="Density") + 
-# 			theme_minimal() + 
-# 			theme(legend.position="none", text=element_text(size=18)) + 
-# 			y_ticks_off + 
-# 			grid_off
-# 		}
+if(current_pars[["symptom_treatment"]]=="split"){
+	fig_wpmean <- shared_params_df %>% 
+		mutate(wpmean_symp=wpmeanS) %>% 
+		mutate(wpmean_asymp=wpmeanA) %>% 
+		select(wpmean_symp, wpmean_asymp) %>% 
+		pivot_longer(everything()) %>% 
+		ggplot(aes(x=value)) + 
+			geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
+			geom_density(aes(col=name), adjust=2) + 
+			# scale_x_continuous(limits=c(0,NA)) + 
+			scale_color_manual(values=c("wpmean_symp"="red","wpmean_asymp"="blue")) + 
+			scale_fill_manual(values=c("wpmean_symp"="red","wpmean_asymp"="blue")) + 
+			labs(x="Mean proliferation stage duration (days)", y="Density") + 
+			theme_minimal() + 
+			theme(legend.position="none", text=element_text(size=18)) + 
+			y_ticks_off + 
+			grid_off
+	} else {
+	fig_wpmean <- shared_params_df %>% 
+		ggplot(aes(x=wpmean)) + 
+			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
+			geom_density(adjust=2) + 
+			# scale_x_continuous(limits=c(0,NA)) + 
+			labs(x="Mean proliferation stage duration (days)", y="Density") + 
+			theme_minimal() + 
+			theme(legend.position="none", text=element_text(size=18)) + 
+			y_ticks_off + 
+			grid_off
+		}
 
-# if(current_pars[["symptom_treatment"]]=="split"){
-# fig_wrmean <- shared_params_df %>% 
-# 	mutate(wrmean_symp=wrmeanS) %>% 
-# 	mutate(wrmean_asymp=wrmeanA) %>% 
-# 	select(wrmean_symp, wrmean_asymp) %>% 
-# 	pivot_longer(everything()) %>% 
-# 	ggplot(aes(x=value)) + 
-# 		geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
-# 		geom_density(aes(col=name), adjust=2) + 
-# 		# scale_x_continuous(limits=c(0,NA)) + 
-# 		scale_color_manual(values=c("wrmean_symp"="red","wrmean_asymp"="blue")) + 
-# 		scale_fill_manual(values=c("wrmean_symp"="red","wrmean_asymp"="blue")) + 
-# 		labs(x="Mean clearance stage duration (days)", y="Density") + 
-# 		theme_minimal() + 
-# 		theme(legend.position="none", text=element_text(size=18)) + 
-# 		y_ticks_off + 
-# 		grid_off
-# 	} else {
-# 	fig_wrmean <- shared_params_df %>% 
-# 		ggplot(aes(x=wrmean)) + 
-# 			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
-# 			geom_density(adjust=2) + 
-# 			# scale_x_continuous(limits=c(0,NA)) + 
-# 			labs(x="Mean clearance stage duration (days)", y="Density") + 
-# 			theme_minimal() + 
-# 			theme(legend.position="none", text=element_text(size=18)) + 
-# 			y_ticks_off + 
-# 			grid_off
-# 	}
+if(current_pars[["symptom_treatment"]]=="split"){
+fig_wrmean <- shared_params_df %>% 
+	mutate(wrmean_symp=wrmeanS) %>% 
+	mutate(wrmean_asymp=wrmeanA) %>% 
+	select(wrmean_symp, wrmean_asymp) %>% 
+	pivot_longer(everything()) %>% 
+	ggplot(aes(x=value)) + 
+		geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
+		geom_density(aes(col=name), adjust=2) + 
+		# scale_x_continuous(limits=c(0,NA)) + 
+		scale_color_manual(values=c("wrmean_symp"="red","wrmean_asymp"="blue")) + 
+		scale_fill_manual(values=c("wrmean_symp"="red","wrmean_asymp"="blue")) + 
+		labs(x="Mean clearance stage duration (days)", y="Density") + 
+		theme_minimal() + 
+		theme(legend.position="none", text=element_text(size=18)) + 
+		y_ticks_off + 
+		grid_off
+	} else {
+	fig_wrmean <- shared_params_df %>% 
+		ggplot(aes(x=wrmean)) + 
+			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
+			geom_density(adjust=2) + 
+			# scale_x_continuous(limits=c(0,NA)) + 
+			labs(x="Mean clearance stage duration (days)", y="Density") + 
+			theme_minimal() + 
+			theme(legend.position="none", text=element_text(size=18)) + 
+			y_ticks_off + 
+			grid_off
+	}
 
-# if(current_pars[["symptom_treatment"]]=="split"){
-# 	fig_infdurmean <- shared_params_df %>% 
-# 		mutate(infdurmean_symp=wpmeanS+wrmeanS) %>% 
-# 		mutate(infdurmean_asymp=wpmeanA+wrmeanA) %>% 
-# 		select(infdurmean_symp, infdurmean_asymp) %>% 
-# 		pivot_longer(everything()) %>% 
-# 		ggplot(aes(x=value)) + 
-# 			geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
-# 			geom_density(aes(col=name), adjust=2) + 
-# 			# scale_x_continuous(limits=c(0,NA)) + 
-# 			scale_color_manual(values=c("infdurmean_symp"="red","infdurmean_asymp"="blue")) + 
-# 			scale_fill_manual(values=c("infdurmean_symp"="red","infdurmean_asymp"="blue")) + 
-# 			labs(x="Mean acute infection duration (days)", y="Density") + 
-# 			theme_minimal() + 
-# 			theme(legend.position="none", text=element_text(size=18)) + 
-# 			y_ticks_off + 
-# 			grid_off
-# 		} else {
-# 		fig_infdurmean <- shared_params_df %>% 
-# 			mutate(infdurmean=wpmean+wrmean) %>% 
-# 			select(infdurmean) %>% 
-# 			pivot_longer(everything()) %>% 
-# 			ggplot(aes(x=value)) + 
-# 				geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
-# 				geom_density( adjust=2) + 
-# 				# scale_x_continuous(limits=c(0,NA)) + 
-# 				labs(x="Mean acute infection duration (days)", y="Density") + 
-# 				theme_minimal() + 
-# 				theme(legend.position="none", text=element_text(size=18)) + 
-# 				y_ticks_off + 
-# 				grid_off
-# 		}
+if(current_pars[["symptom_treatment"]]=="split"){
+	fig_infdurmean <- shared_params_df %>% 
+		mutate(infdurmean_symp=wpmeanS+wrmeanS) %>% 
+		mutate(infdurmean_asymp=wpmeanA+wrmeanA) %>% 
+		select(infdurmean_symp, infdurmean_asymp) %>% 
+		pivot_longer(everything()) %>% 
+		ggplot(aes(x=value)) + 
+			geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
+			geom_density(aes(col=name), adjust=2) + 
+			# scale_x_continuous(limits=c(0,NA)) + 
+			scale_color_manual(values=c("infdurmean_symp"="red","infdurmean_asymp"="blue")) + 
+			scale_fill_manual(values=c("infdurmean_symp"="red","infdurmean_asymp"="blue")) + 
+			labs(x="Mean acute infection duration (days)", y="Density") + 
+			theme_minimal() + 
+			theme(legend.position="none", text=element_text(size=18)) + 
+			y_ticks_off + 
+			grid_off
+		} else {
+		fig_infdurmean <- shared_params_df %>% 
+			mutate(infdurmean=wpmean+wrmean) %>% 
+			select(infdurmean) %>% 
+			pivot_longer(everything()) %>% 
+			ggplot(aes(x=value)) + 
+				geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
+				geom_density( adjust=2) + 
+				# scale_x_continuous(limits=c(0,NA)) + 
+				labs(x="Mean acute infection duration (days)", y="Density") + 
+				theme_minimal() + 
+				theme(legend.position="none", text=element_text(size=18)) + 
+				y_ticks_off + 
+				grid_off
+		}
 
 
 # Overall posterior peak Ct density:
