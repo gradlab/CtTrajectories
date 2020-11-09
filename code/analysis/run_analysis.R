@@ -26,11 +26,20 @@ for(parset in 1:length(masterpars)){ #
 	source('code/analysis/refine_data.R')
 
 	# Fit posteriors: 
-	source('code/analysis/fit_posteriors_preamble.R') 
-	source('code/analysis/fit_posteriors.R') 
+	if(current_pars[["parametrization"]]=="waittime"){
 
-	# # Generate outputs (key figures, best-fit dists)
-	source('code/analysis/make_figures.R')
+		source('code/analysis/fit_posteriors_preamble.R') 
+		source('code/analysis/fit_posteriors.R') 	
+		source('code/analysis/make_figures.R')
+		
+	} else if(current_pars[["parametrization"]]=="slope"){
+		
+		source('code/analysis/fit_posteriors_preamble_slope.R') 
+		source('code/analysis/fit_posteriors_slope.R') 	
+		source('code/analysis/make_figures_slope.R')
+		
+	}	
+		
 	# # Save the figures
 	# source('code/analysis/save_figures.R')
 	# source('code/analysis/save_figures_png.R')
