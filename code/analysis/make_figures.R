@@ -353,6 +353,71 @@ if(current_pars[["symptom_treatment"]]=="split"){
 		}
 
 
+
+
+
+if(current_pars[["symptom_treatment"]]=="split"){
+	fig_apmean <- shared_params_df %>% 
+		mutate(apmean_symp=dpmeanS/wpmeanS) %>% 
+		mutate(apmean_asymp=dpmeanA/wpmeanA) %>% 
+		select(apmean_symp, apmean_asymp) %>% 
+		pivot_longer(everything()) %>% 
+		ggplot(aes(x=value)) + 
+			geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
+			geom_density(aes(col=name), adjust=2) + 
+			# scale_x_continuous(limits=c(0,NA)) + 
+			scale_color_manual(values=c("apmean_symp"="red","apmean_asymp"="blue")) + 
+			scale_fill_manual(values=c("apmean_symp"="red","apmean_asymp"="blue")) + 
+			labs(x="Mean proliferation stage slope (Ct/day)", y="Density") + 
+			theme_minimal() + 
+			theme(legend.position="none", text=element_text(size=18)) + 
+			y_ticks_off + 
+			grid_off
+	} else {
+	fig_apmean <- shared_params_df %>% 
+		ggplot(aes(x=dpmean/wpmean)) + 
+			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
+			geom_density(adjust=2) + 
+			# scale_x_continuous(limits=c(0,NA)) + 
+			labs(x="Mean proliferation stage slope (Ct/day)", y="Density") + 
+			theme_minimal() + 
+			theme(legend.position="none", text=element_text(size=18)) + 
+			y_ticks_off + 
+			grid_off
+		}
+
+
+if(current_pars[["symptom_treatment"]]=="split"){
+	fig_armean <- shared_params_df %>% 
+		mutate(armean_symp=-dpmeanS/wrmeanS) %>% 
+		mutate(armean_asymp=-dpmeanA/wrmeanA) %>% 
+		select(armean_symp, armean_asymp) %>% 
+		pivot_longer(everything()) %>% 
+		ggplot(aes(x=value)) + 
+			geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
+			geom_density(aes(col=name), adjust=2) + 
+			# scale_x_continuous(limits=c(0,NA)) + 
+			scale_color_manual(values=c("armean_symp"="red","armean_asymp"="blue")) + 
+			scale_fill_manual(values=c("armean_symp"="red","armean_asymp"="blue")) + 
+			labs(x="Mean clearance stage slope (Ct/day)", y="Density") + 
+			theme_minimal() + 
+			theme(legend.position="none", text=element_text(size=18)) + 
+			y_ticks_off + 
+			grid_off
+	} else {
+	fig_armean <- shared_params_df %>% 
+		ggplot(aes(x=-dpmean/wrmean)) + 
+			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
+			geom_density(adjust=2) + 
+			# scale_x_continuous(limits=c(0,NA)) + 
+			labs(x="Mean clearance stage slope (Ct/day)", y="Density") + 
+			theme_minimal() + 
+			theme(legend.position="none", text=element_text(size=18)) + 
+			y_ticks_off + 
+			grid_off
+		}
+
+
 # Overall posterior peak Ct density:
 fig_peak_ct_overall <- with(as.list(c(global_pars, prior_pars)),{
 	params_df %>% 

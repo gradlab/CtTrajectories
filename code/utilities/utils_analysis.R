@@ -1,4 +1,5 @@
 library(tidyverse) 
+library(geoR)
 
 # Define a function to calculate the mean Ct given the parameters: 
 mufun <- function(indiv_pars){
@@ -697,3 +698,111 @@ convert_Ct_logGEML <- function(Ct, m_conv=-3.609714286, b_conv=40.93733333){
 	out <- (Ct-b_conv)/m_conv * log10(10) + log10(250)
 	return(out) 
 }
+
+# Custom box-cox transform: 
+bctransform <- function(y, lambda){
+	if(lambda != 0){
+		out <- (y^lambda - 1)/lambda
+		} else {
+		out <- log(y)
+		}
+	return(out)
+}
+
+invbctransform <- function(y, lambda){
+	if(lambda != 0){
+		out <- (lambda*y + 1)^(1/lambda)
+		} else {
+		out <- exp(y)
+		}
+	return(out)
+}
+
+boxcoxify <- function(data, col){
+	vec <- data[[col]]
+	lambda <- boxcoxfit(vec)$lambda
+	vec_bc <- bctransform(vec, lambda)
+	return(vec_bc)
+}
+
+
+temp <- params_df
+temp$wp_bc <- boxcoxify(temp, "wp")
+temp$wr_bc <- boxcoxify(temp, "wr")
+bc_meanvec <- temp %>% 
+	select(dp, wp_bc, wr_bc) %>% 
+	summarise(dp=mean(dp), wp_bc=mean(wp_bc), wr_bc=mean(wr_bc))
+bc_covmat <- cov(select(temp, dp, wp_bc, wr_bc))
+bc_L <- t(chol(bc_covmat))
+
+
+
+
+temp <- boxcoxify(params_df, "wp")
+	
+
+
+
+
+
+params_df %>% 
+	mutate(wp_bc = boxcoxify(., wp))
+
+
+
+
+
+
+
+boxcoxfit(params_df$dp)
+
+
+fig_dpapscatter <- params_df %>% 
+	ggplot(aes(x=dp, y=ap)) + 
+		geom_point(size=0.1, alpha=0.1) + 
+		theme_minimal()  + 
+		facet_wrap(~id)
+
+params_df %>% 
+	ggplot(aes(x=bccustom(wr,.168))) + 
+		geom_histogram(bins=50) + 
+		theme_minimal()
+
+
+boxcoxfit(params_df$wr)$lambda
+
+
+
+
+fig_dpwpscatter <- params_df %>% 
+	ggplot(aes(x=dp, y=wp)) + 
+		geom_point(size=0.1, alpha=0.1) + 
+		theme_minimal()  + 
+		facet_wrap(~id)
+
+
+nperm <- 1000
+trueval <- cor(params_df$dp, params_df$wp)
+permvals <- unlist(pmap(list(
+	rep(list(params_df$dp),nperm),
+	rep(list(params_df$wp),nperm)),
+	function(x,y) cor(sample(x), sample(y))
+))
+ggplot(data=tibble(x=permvals), aes(x=x)) + 
+	geom_histogram() + 
+	geom_vline(xintercept=trueval) + 
+	theme_minimal()
+
+
+# hist(log(params_df$wp), breaks=100)
+# cov(select(params_df,dp,wp,wr))
+
+cor(sample(params_df$wp), sample(params_df$dp))
+
+
+
+
+
+
+
+
