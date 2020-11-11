@@ -352,6 +352,39 @@ if(current_pars[["symptom_treatment"]]=="split"){
 		}
 
 
+
+if(current_pars[["symptom_treatment"]]=="split"){
+	fig_gemlmean <- shared_params_df %>% 
+		mutate(dpmean_symp=dpmeanS) %>% 
+		mutate(dpmean_asymp=dpmeanA) %>% 
+		select(dpmean_symp, dpmean_asymp) %>% 
+		pivot_longer(everything()) %>% 
+		ggplot(aes(x=10^convert_Ct_logGEML(global_pars[["lod"]]-value))) + 
+			geom_histogram(aes(y=..density.., fill=name), alpha=0.2, position="identity", bins=50) + 
+			geom_density(aes(col=name), adjust=2) + 
+			scale_x_continuous(trans='log10', labels = trans_format("log10", math_format(10^.x))) + 
+			# scale_x_continuous(limits=c(0,NA)) + 
+			scale_color_manual(values=c("dpmean_symp"="red","dpmean_asymp"="blue")) + 
+			scale_fill_manual(values=c("dpmean_symp"="red","dpmean_asymp"="blue")) + 
+			labs(x="Genome equivalents/ml", y="Density") + 
+			theme_minimal() + 
+			theme(legend.position="none", text=element_text(size=18)) + 
+			y_ticks_off + 
+			grid_off
+	} else{
+	fig_gemlmean <- shared_params_df %>% 
+		ggplot(aes(x=10^convert_Ct_logGEML(global_pars[["lod"]]-dpmean))) + 
+			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
+			geom_density(adjust=2) + 
+			scale_x_continuous(trans='log10', labels = trans_format("log10", math_format(10^.x))) +
+			# scale_x_continuous(limits=c(0,NA)) + 
+			labs(x="Genome equivalents/ml", y="Density") + 
+			theme_minimal() + 
+			theme(legend.position="none", text=element_text(size=18)) + 
+			y_ticks_off + 
+			grid_off
+		}
+
 # Overall posterior peak Ct density:
 fig_peak_ct_overall <- with(as.list(c(global_pars, prior_pars)),{
 	params_df %>% 

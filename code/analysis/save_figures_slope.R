@@ -21,6 +21,7 @@ ggsave(fig_dpmean,file=paste0(figsave_dir_sensitivity,"dpmean.pdf"), width=8, he
 ggsave(fig_wpmean,file=paste0(figsave_dir_sensitivity,"wpmean.pdf"), width=8, height=5)
 ggsave(fig_wrmean,file=paste0(figsave_dir_sensitivity,"wrmean.pdf"), width=8, height=5)
 ggsave(fig_infdurmean,file=paste0(figsave_dir_sensitivity,"infdurmean.pdf"), width=8, height=5)
+ggsave(fig_gemlmean,file=paste0(figsave_dir_sensitivity,"gemlmean.pdf"), width=8, height=5)
 ggsave(fig_peak_ct_overall,file=paste0(figsave_dir_sensitivity,"peak_ct_overall.pdf"), width=8, height=5)
 ggsave(fig_t_onset_to_peak_overall,file=paste0(figsave_dir_sensitivity,"t_onset_to_peak_overall.pdf"), width=8, height=5)
 ggsave(fig_t_peak_to_recovery_overall,file=paste0(figsave_dir_sensitivity,"t_peak_to_recovery_overall.pdf"), width=8, height=5)
