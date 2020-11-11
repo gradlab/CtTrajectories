@@ -37,4 +37,5 @@ ggsave(fig_onset_given_infection_ppv_ma,file=paste0(figsave_dir_sensitivity,"ons
 ggsave(fig_onset_given_infection_ppv_ma_raw,file=paste0(figsave_dir_sensitivity,"onset_given_infection_ppv_ma_raw.png"), width=8, height=5)
 ggsave(fig_onset_given_infection_ppv_ma_paired,file=paste0(figsave_dir_sensitivity,"onset_given_infection_ppv_ma_paired.png"), width=8, height=5)
 ggsave(fig_ct_trajectory_inference,file=paste0(figsave_dir_sensitivity,"ct_trajectory_inference.png"), width=8, height=5)
+ggsave(fig_ge_trajectory_inference,file=paste0(figsave_dir_sensitivity,"ge_trajectory_inference.png"), width=8, height=5)
 
