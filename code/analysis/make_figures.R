@@ -782,33 +782,33 @@ make_sample_trajectory_symp <- function(shared_params_df, global_pars, siglevel=
 					xvals=xvals_proliferation_A, 
 					yvals_lwr=(yvals_lwr_proliferation_A), 
 					yvals_upr=(yvals_upr_proliferation_A)),
-				aes(x=xvals, ymin=convert_Ct_logGEML(lod-yvals_lwr), ymax=convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="blue") + 
-			geom_segment(aes(x=-wp_mean_A,xend=0,y=convert_Ct_logGEML(lod),yend=convert_Ct_logGEML(lod-dp_mean_A)),col="blue") + 
+				aes(x=xvals, ymin=10^convert_Ct_logGEML(lod-yvals_lwr), ymax=10^convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="blue") + 
+			geom_segment(aes(x=-wp_mean_A,xend=0,y=10^convert_Ct_logGEML(lod),yend=10^convert_Ct_logGEML(lod-dp_mean_A)),col="blue") + 
 			geom_ribbon(
 				data=tibble(
 					xvals=xvals_proliferation_S, 
 					yvals_lwr=(yvals_lwr_proliferation_S), 
 					yvals_upr=(yvals_upr_proliferation_S)),
-				aes(x=xvals, ymin=convert_Ct_logGEML(lod-yvals_lwr), ymax=convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="red") + 
-			geom_segment(aes(x=-wp_mean_S,xend=0,y=convert_Ct_logGEML(lod),yend=convert_Ct_logGEML(lod-dp_mean_S)),col="red") + 
+				aes(x=xvals, ymin=10^convert_Ct_logGEML(lod-yvals_lwr), ymax=10^convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="red") + 
+			geom_segment(aes(x=-wp_mean_S,xend=0,y=10^convert_Ct_logGEML(lod),yend=10^convert_Ct_logGEML(lod-dp_mean_S)),col="red") + 
 			geom_ribbon(
 				data=tibble(
 					xvals=xvals_clearance_A, 
 					yvals_lwr=(yvals_lwr_clearance_A), 
 					yvals_upr=(yvals_upr_clearance_A)),
-				aes(x=xvals, ymin=convert_Ct_logGEML(lod-yvals_lwr), ymax=convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="blue") + 
-			geom_segment(aes(x=0,xend=wr_mean_A,y=convert_Ct_logGEML(lod-dp_mean_A),yend=convert_Ct_logGEML(lod)),col="blue") + 
+				aes(x=xvals, ymin=10^convert_Ct_logGEML(lod-yvals_lwr), ymax=10^convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="blue") + 
+			geom_segment(aes(x=0,xend=wr_mean_A,y=10^convert_Ct_logGEML(lod-dp_mean_A),yend=10^convert_Ct_logGEML(lod)),col="blue") + 
 			geom_ribbon(
 				data=tibble(
 					xvals=xvals_clearance_S, 
 					yvals_lwr=(yvals_lwr_clearance_S), 
 					yvals_upr=(yvals_upr_clearance_S)),
-				aes(x=xvals, ymin=convert_Ct_logGEML(lod-yvals_lwr), ymax=convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="red") + 
-			geom_segment(aes(x=0,xend=wr_mean_S,y=convert_Ct_logGEML(lod-dp_mean_S),yend=convert_Ct_logGEML(lod)),col="red") + 
-			coord_cartesian(ylim=c(convert_Ct_logGEML(40),convert_Ct_logGEML(20)), expand=FALSE) + 
+				aes(x=xvals, ymin=10^convert_Ct_logGEML(lod-yvals_lwr), ymax=10^convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="red") + 
+			geom_segment(aes(x=0,xend=wr_mean_S,y=10^convert_Ct_logGEML(lod-dp_mean_S),yend=10^convert_Ct_logGEML(lod)),col="red") + 
+			coord_cartesian(ylim=c(10^convert_Ct_logGEML(40),10^convert_Ct_logGEML(20)), expand=FALSE) + 
 			theme_minimal() + 
 			labs(x="Days from peak", y="Genome equivalents per ml") + 
-			# scale_y_reverse() + 
+			scale_y_continuous(trans='log10', labels = trans_format("log10", math_format(10^.x))) + 
 			theme(text=element_text(size=18))
 	}
 
@@ -875,19 +875,19 @@ make_sample_trajectory <- function(shared_params_df, global_pars, siglevel=0.9, 
 					xvals=xvals_proliferation, 
 					yvals_lwr=(yvals_lwr_proliferation), 
 					yvals_upr=(yvals_upr_proliferation)),
-				aes(x=xvals, ymin=convert_Ct_logGEML(lod-yvals_lwr), ymax=convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="grey") + 
-			geom_segment(aes(x=-wp_mean,xend=0,y=convert_Ct_logGEML(lod),yend=convert_Ct_logGEML(lod-dp_mean)),col="black") + 
+				aes(x=xvals, ymin=10^convert_Ct_logGEML(lod-yvals_lwr), ymax=10^convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="grey") + 
+			geom_segment(aes(x=-wp_mean,xend=0,y=10^convert_Ct_logGEML(lod),yend=10^convert_Ct_logGEML(lod-dp_mean)),col="black") + 
 			geom_ribbon(
 				data=tibble(
 					xvals=xvals_clearance, 
 					yvals_lwr=(yvals_lwr_clearance), 
 					yvals_upr=(yvals_upr_clearance)),
-				aes(x=xvals, ymin=convert_Ct_logGEML(lod-yvals_lwr), ymax=convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="grey") + 
-			geom_segment(aes(x=0,xend=wr_mean,y=convert_Ct_logGEML(lod-dp_mean),yend=convert_Ct_logGEML(lod)),col="black") + 
-			# coord_cartesian(ylim=c(40,20), expand=FALSE) + 
+				aes(x=xvals, ymin=10^convert_Ct_logGEML(lod-yvals_lwr), ymax=10^convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="grey") + 
+			geom_segment(aes(x=0,xend=wr_mean,y=10^convert_Ct_logGEML(lod-dp_mean),yend=10^convert_Ct_logGEML(lod)),col="black") + 
+			coord_cartesian(ylim=c(10^convert_Ct_logGEML(40),10^convert_Ct_logGEML(20)), expand=FALSE) + 
 			theme_minimal() + 
 			labs(x="Days from peak", y="Genome equivalents per ml") + 
-			# scale_y_reverse() + 
+			scale_y_continuous(trans='log10', labels = trans_format("log10", math_format(10^.x))) + 
 			theme(text=element_text(size=18))
 	}
 
