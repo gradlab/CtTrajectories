@@ -699,3 +699,225 @@ convert_Ct_logGEML <- function(Ct, m_conv=-3.609714286, b_conv=40.93733333){
 }
 
 
+
+
+# the following four functions are for generating sample trajectory figures:
+srise <- function(x, dp, wp){
+	out <- dp*(1+x/wp)
+	return(out)
+}
+sfall <- function(x, dp, wr){
+	out <- dp*(1-x/wr)
+	return(out)
+}
+
+make_sample_trajectory_symp <- function(shared_params_df, global_pars, siglevel=0.9, ge=FALSE){
+	# For asymptomatic:
+	with(as.list(global_pars),{
+
+	wp_mean_A <- mean(shared_params_df$wpmeanA)
+	wp_lwr_A <- quantile(shared_params_df$wpmeanA,(1-siglevel)/2)
+	wp_upr_A <- quantile(shared_params_df$wpmeanA,1-(1-siglevel)/2)
+
+	wr_mean_A <- mean(shared_params_df$wrmeanA)
+	wr_lwr_A <- quantile(shared_params_df$wrmeanA,(1-siglevel)/2)
+	wr_upr_A <- quantile(shared_params_df$wrmeanA,1-(1-siglevel)/2)
+
+	dp_mean_A <- mean(shared_params_df$dpmeanA)
+	dp_lwr_A <- quantile(shared_params_df$dpmeanA,(1-siglevel)/2)
+	dp_upr_A <- quantile(shared_params_df$dpmeanA,1-(1-siglevel)/2)
+
+	xvals_proliferation_A <- seq(from=-wp_upr_A, 0, length.out=500)
+	xvals_clearance_A <- seq(from=0, wr_upr_A, length.out=500)
+
+	yvals_upr_proliferation_A <- unlist(lapply(xvals_proliferation_A, 
+	function(x) quantile(srise(x, shared_params_df$dpmeanA, shared_params_df$wpmeanA),0.9)))
+	yvals_lwr_proliferation_A <- unlist(lapply(xvals_proliferation_A, 
+	function(x) quantile(srise(x, shared_params_df$dpmeanA, shared_params_df$wpmeanA),0.1)))
+	yvals_upr_clearance_A <- unlist(lapply(xvals_clearance_A, 
+	function(x) quantile(sfall(x, shared_params_df$dpmeanA, shared_params_df$wrmeanA),0.9)))
+	yvals_lwr_clearance_A <- unlist(lapply(xvals_clearance_A, 
+	function(x) quantile(sfall(x, shared_params_df$dpmeanA, shared_params_df$wrmeanA),0.1)))
+
+	# For symptomatic:
+	wp_mean_S <- mean(shared_params_df$wpmeanS)
+	wp_lwr_S <- quantile(shared_params_df$wpmeanS,(1-siglevel)/2)
+	wp_upr_S <- quantile(shared_params_df$wpmeanS,1-(1-siglevel)/2)
+
+	wr_mean_S <- mean(shared_params_df$wrmeanS)
+	wr_lwr_S <- quantile(shared_params_df$wrmeanS,(1-siglevel)/2)
+	wr_upr_S <- quantile(shared_params_df$wrmeanS,1-(1-siglevel)/2)
+
+	dp_mean_S <- mean(shared_params_df$dpmeanS)
+	dp_lwr_S <- quantile(shared_params_df$dpmeanS,(1-siglevel)/2)
+	dp_upr_S <- quantile(shared_params_df$dpmeanS,1-(1-siglevel)/2)
+
+	xvals_proliferation_S <- seq(from=-wp_upr_S, 0, length.out=500)
+	xvals_clearance_S <- seq(from=0, wr_upr_S, length.out=500)
+
+	yvals_upr_proliferation_S <- unlist(lapply(xvals_proliferation_S, 
+	function(x) quantile(srise(x, shared_params_df$dpmeanS, shared_params_df$wpmeanS),0.9)))
+	yvals_lwr_proliferation_S <- unlist(lapply(xvals_proliferation_S, 
+	function(x) quantile(srise(x, shared_params_df$dpmeanS, shared_params_df$wpmeanS),0.1)))
+	yvals_upr_clearance_S <- unlist(lapply(xvals_clearance_S, 
+	function(x) quantile(sfall(x, shared_params_df$dpmeanS, shared_params_df$wrmeanS),0.9)))
+	yvals_lwr_clearance_S <- unlist(lapply(xvals_clearance_S, 
+	function(x) quantile(sfall(x, shared_params_df$dpmeanS, shared_params_df$wrmeanS),0.1)))
+
+	if(ge==FALSE){
+		out <- ggplot() + 
+			geom_ribbon(
+				data=tibble(
+					xvals=xvals_proliferation_A, 
+					yvals_lwr=yvals_lwr_proliferation_A, 
+					yvals_upr=yvals_upr_proliferation_A),
+				aes(x=xvals, ymin=lod-yvals_lwr, ymax=lod-yvals_upr), alpha=0.2, fill="blue") + 
+			geom_segment(aes(x=-wp_mean_A,xend=0,y=lod,yend=lod-dp_mean_A),col="blue") + 
+			geom_ribbon(
+				data=tibble(
+					xvals=xvals_proliferation_S, 
+					yvals_lwr=yvals_lwr_proliferation_S, 
+					yvals_upr=yvals_upr_proliferation_S),
+				aes(x=xvals, ymin=lod-yvals_lwr, ymax=lod-yvals_upr), alpha=0.2, fill="red") + 
+			geom_segment(aes(x=-wp_mean_S,xend=0,y=lod,yend=lod-dp_mean_S),col="red") + 
+			geom_ribbon(
+				data=tibble(
+					xvals=xvals_clearance_A, 
+					yvals_lwr=yvals_lwr_clearance_A, 
+					yvals_upr=yvals_upr_clearance_A),
+				aes(x=xvals, ymin=lod-yvals_lwr, ymax=lod-yvals_upr), alpha=0.2, fill="blue") + 
+			geom_segment(aes(x=0,xend=wr_mean_A,y=lod-dp_mean_A,yend=lod),col="blue") + 
+			geom_ribbon(
+				data=tibble(
+					xvals=xvals_clearance_S, 
+					yvals_lwr=yvals_lwr_clearance_S, 
+					yvals_upr=yvals_upr_clearance_S),
+				aes(x=xvals, ymin=lod-yvals_lwr, ymax=lod-yvals_upr), alpha=0.2, fill="red") + 
+			geom_segment(aes(x=0,xend=wr_mean_S,y=lod-dp_mean_S,yend=lod),col="red") + 
+			coord_cartesian(ylim=c(40,20), expand=FALSE) + 
+			theme_minimal() + 
+			labs(x="Days from peak", y="Ct") + 
+			scale_y_reverse() + 
+			theme(text=element_text(size=18))
+	} else {
+		out <- ggplot() + 
+			geom_ribbon(
+				data=tibble(
+					xvals=xvals_proliferation_A, 
+					yvals_lwr=(yvals_lwr_proliferation_A), 
+					yvals_upr=(yvals_upr_proliferation_A)),
+				aes(x=xvals, ymin=10^convert_Ct_logGEML(lod-yvals_lwr), ymax=10^convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="blue") + 
+			geom_segment(aes(x=-wp_mean_A,xend=0,y=10^convert_Ct_logGEML(lod),yend=10^convert_Ct_logGEML(lod-dp_mean_A)),col="blue") + 
+			geom_ribbon(
+				data=tibble(
+					xvals=xvals_proliferation_S, 
+					yvals_lwr=(yvals_lwr_proliferation_S), 
+					yvals_upr=(yvals_upr_proliferation_S)),
+				aes(x=xvals, ymin=10^convert_Ct_logGEML(lod-yvals_lwr), ymax=10^convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="red") + 
+			geom_segment(aes(x=-wp_mean_S,xend=0,y=10^convert_Ct_logGEML(lod),yend=10^convert_Ct_logGEML(lod-dp_mean_S)),col="red") + 
+			geom_ribbon(
+				data=tibble(
+					xvals=xvals_clearance_A, 
+					yvals_lwr=(yvals_lwr_clearance_A), 
+					yvals_upr=(yvals_upr_clearance_A)),
+				aes(x=xvals, ymin=10^convert_Ct_logGEML(lod-yvals_lwr), ymax=10^convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="blue") + 
+			geom_segment(aes(x=0,xend=wr_mean_A,y=10^convert_Ct_logGEML(lod-dp_mean_A),yend=10^convert_Ct_logGEML(lod)),col="blue") + 
+			geom_ribbon(
+				data=tibble(
+					xvals=xvals_clearance_S, 
+					yvals_lwr=(yvals_lwr_clearance_S), 
+					yvals_upr=(yvals_upr_clearance_S)),
+				aes(x=xvals, ymin=10^convert_Ct_logGEML(lod-yvals_lwr), ymax=10^convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="red") + 
+			geom_segment(aes(x=0,xend=wr_mean_S,y=10^convert_Ct_logGEML(lod-dp_mean_S),yend=10^convert_Ct_logGEML(lod)),col="red") + 
+			coord_cartesian(ylim=c(10^convert_Ct_logGEML(40),10^convert_Ct_logGEML(20)), expand=FALSE) + 
+			theme_minimal() + 
+			labs(x="Days from peak", y="Genome equivalents per ml") + 
+			scale_y_continuous(trans='log10', labels = trans_format("log10", math_format(10^.x))) + 
+			theme(text=element_text(size=18))
+	}
+
+	return(out)
+
+	})
+
+}
+
+
+make_sample_trajectory <- function(shared_params_df, global_pars, siglevel=0.9, ge=FALSE){
+	# For asymptomatic:
+	with(as.list(global_pars),{
+
+	wp_mean <- mean(shared_params_df$wpmean)
+	wp_lwr <- quantile(shared_params_df$wpmean,(1-siglevel)/2)
+	wp_upr <- quantile(shared_params_df$wpmean,1-(1-siglevel)/2)
+
+	wr_mean <- mean(shared_params_df$wrmean)
+	wr_lwr <- quantile(shared_params_df$wrmean,(1-siglevel)/2)
+	wr_upr <- quantile(shared_params_df$wrmean,1-(1-siglevel)/2)
+
+	dp_mean <- mean(shared_params_df$dpmean)
+	dp_lwr <- quantile(shared_params_df$dpmean,(1-siglevel)/2)
+	dp_upr <- quantile(shared_params_df$dpmean,1-(1-siglevel)/2)
+
+	xvals_proliferation <- seq(from=-wp_upr, 0, length.out=500)
+	xvals_clearance <- seq(from=0, wr_upr, length.out=500)
+
+	yvals_upr_proliferation <- unlist(lapply(xvals_proliferation, 
+	function(x) quantile(srise(x, shared_params_df$dpmean, shared_params_df$wpmean),0.9)))
+	yvals_lwr_proliferation <- unlist(lapply(xvals_proliferation, 
+	function(x) quantile(srise(x, shared_params_df$dpmean, shared_params_df$wpmean),0.1)))
+	yvals_upr_clearance <- unlist(lapply(xvals_clearance, 
+	function(x) quantile(sfall(x, shared_params_df$dpmean, shared_params_df$wrmean),0.9)))
+	yvals_lwr_clearance <- unlist(lapply(xvals_clearance, 
+	function(x) quantile(sfall(x, shared_params_df$dpmean, shared_params_df$wrmean),0.1)))
+
+	if(ge==FALSE){
+		out <- ggplot() + 
+			geom_ribbon(
+				data=tibble(
+					xvals=xvals_proliferation, 
+					yvals_lwr=yvals_lwr_proliferation, 
+					yvals_upr=yvals_upr_proliferation),
+				aes(x=xvals, ymin=lod-yvals_lwr, ymax=lod-yvals_upr), alpha=0.2, fill="grey") + 
+			geom_segment(aes(x=-wp_mean,xend=0,y=lod,yend=lod-dp_mean),col="black") + 
+			geom_ribbon(
+				data=tibble(
+					xvals=xvals_clearance, 
+					yvals_lwr=yvals_lwr_clearance, 
+					yvals_upr=yvals_upr_clearance),
+				aes(x=xvals, ymin=lod-yvals_lwr, ymax=lod-yvals_upr), alpha=0.2, fill="grey") + 
+			geom_segment(aes(x=0,xend=wr_mean,y=lod-dp_mean,yend=lod),col="black") + 
+			coord_cartesian(ylim=c(40,20), expand=FALSE) + 
+			theme_minimal() + 
+			labs(x="Days from peak", y="Ct") + 
+			scale_y_reverse() + 
+			theme(text=element_text(size=18))
+	} else {
+		out <- ggplot() + 
+			geom_ribbon(
+				data=tibble(
+					xvals=xvals_proliferation, 
+					yvals_lwr=(yvals_lwr_proliferation), 
+					yvals_upr=(yvals_upr_proliferation)),
+				aes(x=xvals, ymin=10^convert_Ct_logGEML(lod-yvals_lwr), ymax=10^convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="grey") + 
+			geom_segment(aes(x=-wp_mean,xend=0,y=10^convert_Ct_logGEML(lod),yend=10^convert_Ct_logGEML(lod-dp_mean)),col="black") + 
+			geom_ribbon(
+				data=tibble(
+					xvals=xvals_clearance, 
+					yvals_lwr=(yvals_lwr_clearance), 
+					yvals_upr=(yvals_upr_clearance)),
+				aes(x=xvals, ymin=10^convert_Ct_logGEML(lod-yvals_lwr), ymax=10^convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="grey") + 
+			geom_segment(aes(x=0,xend=wr_mean,y=10^convert_Ct_logGEML(lod-dp_mean),yend=10^convert_Ct_logGEML(lod)),col="black") + 
+			coord_cartesian(ylim=c(10^convert_Ct_logGEML(40),10^convert_Ct_logGEML(20)), expand=FALSE) + 
+			theme_minimal() + 
+			labs(x="Days from peak", y="Genome equivalents per ml") + 
+			scale_y_continuous(trans='log10', labels = trans_format("log10", math_format(10^.x))) + 
+			theme(text=element_text(size=18))
+	}
+
+	return(out)
+
+	})
+
+}
+

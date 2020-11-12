@@ -6,48 +6,6 @@ library(purrr)
 # Vectorize the uniform draw function:
 runif_V = Vectorize(runif)
 
-# Draw gamma-distributed values given a mean and sd; 
-# rgamma_musd <- function(n, mean, sd){
-# 	shape <- (mean^2)/(sd^2)
-# 	rate <- mean/(sd^2)
-# 	out <- rgamma(n, shape=shape, rate=rate) 
-# 	return(out) 
-# }
-
-# qgamma_musd <- function(p, mean, sd){
-# 	shape <- (mean^2)/(sd^2)
-# 	rate <- mean/(sd^2)
-# 	out <- qgamma(p, shape=shape, rate=rate) 
-# 	return(out) 
-# }
-
-# # Randomly sample trajectories (output is a dataframe with n rows)
-# rtrajectory <- function(n, trajectory_pars, event_duration){
-# 	with(as.list(c(trajectory_pars)),{
- 
-# 		# Assign trajectory values to all individuals 
-# 		wpvec <- rgamma_musd(n, wpmean, wpsd)
-# 		wrvec <- rgamma_musd(n, wrmean, wrsd)
-# 		dpvec <- rtruncnorm(n, a=maxct-inf_ct, b=maxct, dpmean, dpsd)
-
-# 		trajectory_df <- tibble(
-# 			wp=wpvec,
-# 			wr=wrvec,
-# 			dp=dpvec)
-
-# 		trajectory_df <- trajectory_df %>% 
-# 			mutate(to_lwr = (wr/dp)*(maxct-dp-inf_ct) - wp ) %>% 
-# 			mutate(to_upr = -(wp/dp)*(maxct-inf_ct) + event_duration) %>%
-# 			mutate(to=runif_V(1,to_lwr,to_upr)) %>%
-# 			select(-to_lwr, -to_upr) %>%
-# 			mutate(id=1:n()) %>%
-# 			select(id, to, wp, wr, dp)
-	
-# 		return(trajectory_df)	
-# 	})
-# }
-
-
 drawonsets <- function(trajectory_df, inf_ct, maxct, event_duration){
 	out <- trajectory_df %>% 
 		mutate(to_lwr = (wr/dp)*(maxct-dp-inf_ct) - wp ) %>% 
