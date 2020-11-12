@@ -1,54 +1,64 @@
+# source('code/utilities/utils_effse.R')
+
 library(tidyverse) 
 library(purrr)
-library(truncnorm)
 
 # Vectorize the uniform draw function:
 runif_V = Vectorize(runif)
 
 # Draw gamma-distributed values given a mean and sd; 
-rgamma_musd <- function(n, mean, sd){
-	shape <- (mean^2)/(sd^2)
-	rate <- mean/(sd^2)
-	out <- rgamma(n, shape=shape, rate=rate) 
-	return(out) 
-}
+# rgamma_musd <- function(n, mean, sd){
+# 	shape <- (mean^2)/(sd^2)
+# 	rate <- mean/(sd^2)
+# 	out <- rgamma(n, shape=shape, rate=rate) 
+# 	return(out) 
+# }
 
-qgamma_musd <- function(p, mean, sd){
-	shape <- (mean^2)/(sd^2)
-	rate <- mean/(sd^2)
-	out <- qgamma(p, shape=shape, rate=rate) 
-	return(out) 
-}
+# qgamma_musd <- function(p, mean, sd){
+# 	shape <- (mean^2)/(sd^2)
+# 	rate <- mean/(sd^2)
+# 	out <- qgamma(p, shape=shape, rate=rate) 
+# 	return(out) 
+# }
 
-# Randomly sample trajectories (output is a dataframe with n rows)
-rtrajectory <- function(n, trajectory_pars, event_duration){
-	with(as.list(c(trajectory_pars)),{
+# # Randomly sample trajectories (output is a dataframe with n rows)
+# rtrajectory <- function(n, trajectory_pars, event_duration){
+# 	with(as.list(c(trajectory_pars)),{
  
-		# Assign trajectory values to all individuals 
-		wpvec <- rgamma_musd(n, wpmean, wpsd)
-		wrvec <- rgamma_musd(n, wrmean, wrsd)
-		dpvec <- rtruncnorm(n, a=maxct-inf_ct, b=maxct, dpmean, dpsd)
+# 		# Assign trajectory values to all individuals 
+# 		wpvec <- rgamma_musd(n, wpmean, wpsd)
+# 		wrvec <- rgamma_musd(n, wrmean, wrsd)
+# 		dpvec <- rtruncnorm(n, a=maxct-inf_ct, b=maxct, dpmean, dpsd)
 
-		trajectory_df <- tibble(
-			wp=wpvec,
-			wr=wrvec,
-			dp=dpvec)
+# 		trajectory_df <- tibble(
+# 			wp=wpvec,
+# 			wr=wrvec,
+# 			dp=dpvec)
 
-		trajectory_df <- trajectory_df %>% 
-			mutate(to_lwr = (wr/dp)*(maxct-dp-inf_ct) - wp ) %>% 
-			mutate(to_upr = -(wp/dp)*(maxct-inf_ct) + event_duration) %>%
-			mutate(to=runif_V(1,to_lwr,to_upr)) %>%
-			select(-to_lwr, -to_upr) %>%
-			mutate(id=1:n()) %>%
-			select(id, to, wp, wr, dp)
+# 		trajectory_df <- trajectory_df %>% 
+# 			mutate(to_lwr = (wr/dp)*(maxct-dp-inf_ct) - wp ) %>% 
+# 			mutate(to_upr = -(wp/dp)*(maxct-inf_ct) + event_duration) %>%
+# 			mutate(to=runif_V(1,to_lwr,to_upr)) %>%
+# 			select(-to_lwr, -to_upr) %>%
+# 			mutate(id=1:n()) %>%
+# 			select(id, to, wp, wr, dp)
 	
-		return(trajectory_df)	
-	})
+# 		return(trajectory_df)	
+# 	})
+# }
+
+
+drawonsets <- function(trajectory_df, inf_ct, maxct, event_duration){
+	out <- trajectory_df %>% 
+		mutate(to_lwr = (wr/dp)*(maxct-dp-inf_ct) - wp ) %>% 
+		mutate(to_upr = -(wp/dp)*(maxct-inf_ct) + event_duration) %>%
+		mutate(to=runif_V(1,to_lwr,to_upr)) %>%
+		select(-to_lwr, -to_upr) %>%
+		select(to, wp, wr, dp)
 }
 
-getct <- function(trajectory_df, t, trajectory_pars){
 
-	with(as.list(trajectory_pars),{
+getct <- function(trajectory_df, t, maxct){
 
 	out <- trajectory_df %>% 
 		mutate(t=t) %>% 
@@ -60,7 +70,6 @@ getct <- function(trajectory_df, t, trajectory_pars){
 
 	return(out) 
 
-	})
 }
 
 runtest <- function(ct_df, lod, se){
@@ -75,12 +84,16 @@ runtest <- function(ct_df, lod, se){
 	return(out)
 }
 
-get_effective_sensitivity <- function(t_test, lod, se, trajectory_pars, event_duration=3/24, ndraws=1000){
+# In general, will want to put in a slice of params_df rather than the full thing.
+get_effective_sensitivity <- function(t_test, lod, se, inf_ct, maxct, params_df, event_duration=3/24){
 
-	trajectory_df <- rtrajectory(ndraws, trajectory_pars, event_duration)
+	trajectory_df <- params_df %>% 
+		# sample_n(1000) %>%
+		select(wp, wr, dp) %>%
+		drawonsets(inf_ct, maxct, event_duration)
 
 	out <- trajectory_df %>% 
-		getct(t_test, trajectory_pars) %>% 
+		getct(t_test, maxct) %>% 
 		runtest(lod=lod, se=se) %>%
 		summarise(sensitivity=sum(screened)/n()) %>% 
 		pull(sensitivity)
@@ -89,12 +102,13 @@ get_effective_sensitivity <- function(t_test, lod, se, trajectory_pars, event_du
 
 }
 
-get_n_infectious <- function(t_test, lod, se, trajectory_pars, pop_pars, event_duration=3/24, ngames=1000, siglevel=0.9){
+# In general, will want to put in a slice of params_df rather than the full thing.
+get_n_infectious <- function(t_test, lod, se, inf_ct, maxct, params_df, pop_pars, event_duration=3/24, ngames=1000, siglevel=0.9){
 
-	with(as.list(c(trajectory_pars, pop_pars)),{
+	with(as.list(c(pop_pars)),{
 
 		n_infectious_baseline <- rbinom(ngames, n_attendees, prev)
-		eff_se <- get_effective_sensitivity(t_test, lod, se, trajectory_pars, event_duration, ndraws=5000)
+		eff_se <- get_effective_sensitivity(t_test, lod, se, inf_ct, maxct, params_df, event_duration)
 		n_infectious <- unlist(lapply(n_infectious_baseline, function(x) rbinom(1, x, 1-eff_se)))
 		out <- tibble(
 			mean=mean(n_infectious),
