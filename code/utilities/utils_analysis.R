@@ -715,6 +715,16 @@ make_sample_trajectory_symp <- function(shared_params_df, global_pars, siglevel=
 	# For asymptomatic:
 	with(as.list(global_pars),{
 
+	shared_params_df <- shared_params_df %>% 
+		select(-wpmeanA, -wpmeanS, -wrmeanA, -wrmeanS, -dpmeanA, -dpmeanS) %>%
+		mutate(wpmeanA=wpmeanA_trans,
+			wpmeanS=wpmeanS_trans,
+			wrmeanA=wrmeanA_trans,
+			wrmeanS=wrmeanS_trans,
+			dpmeanA=dpmeanA_trans,
+			dpmeanS=dpmeanS_trans)
+
+
 	wp_mean_A <- mean(shared_params_df$wpmeanA)
 	wp_lwr_A <- quantile(shared_params_df$wpmeanA,(1-siglevel)/2)
 	wp_upr_A <- quantile(shared_params_df$wpmeanA,1-(1-siglevel)/2)
@@ -847,6 +857,12 @@ make_sample_trajectory <- function(shared_params_df, global_pars, siglevel=0.9, 
 	# For asymptomatic:
 	with(as.list(global_pars),{
 
+	shared_params_df <- shared_params_df %>% 
+		select(-wpmean, -wrmean, -dpmean) %>%
+		mutate(wpmean=wpmean_trans,
+			wrmean=wrmean_trans,
+			dpmean=dpmean_trans)
+
 	wp_mean <- mean(shared_params_df$wpmean)
 	wp_lwr <- quantile(shared_params_df$wpmean,(1-siglevel)/2)
 	wp_upr <- quantile(shared_params_df$wpmean,1-(1-siglevel)/2)
@@ -919,5 +935,14 @@ make_sample_trajectory <- function(shared_params_df, global_pars, siglevel=0.9, 
 
 	})
 
+}
+
+truncnormmean <- function(mu, sigma, T0, T1){
+	alpha <- (T0 - mu)/sigma
+	beta <- (T1 - mu)/sigma
+	out <- mu + 
+		(dnorm(alpha, 0, 1) - dnorm(beta, 0, 1))/
+		(pnorm(beta, 0, 1) - pnorm(alpha, 0, 1))*sigma
+	return(out)
 }
 

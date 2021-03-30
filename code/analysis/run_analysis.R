@@ -29,15 +29,15 @@ for(parset in 1:length(masterpars)){ #length(masterpars)
 	source('code/analysis/fit_posteriors_preamble.R') 
 	source('code/analysis/fit_posteriors.R') 	
 	source('code/analysis/make_figures.R')
-	# source('code/analysis/save_figures.R')
-	# source('code/analysis/save_figures_png.R')
+	source('code/analysis/save_figures.R')
+	source('code/analysis/save_figures_png.R')
 		
 	# Save the figures
 	final_fitlist[[parset]] <- ct_fit
 
 }
 
-# save(final_fitlist, file="output/final_fitlist.RData")
+save(final_fitlist, file="output/revisions/final_fitlist.RData")
 
 source('code/analysis/report_results.R')
 

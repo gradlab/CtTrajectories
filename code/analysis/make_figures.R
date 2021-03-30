@@ -134,8 +134,8 @@ fig_sigma <- with(as.list(prior_pars), {data.frame(sigma=params$sigma) %>%
 
 if(current_pars[["symptom_treatment"]]=="split"){
 	fig_dpmean_withprior <- shared_params_df %>% 
-		mutate(dpmean_symp=dpmeanS) %>% 
-		mutate(dpmean_asymp=dpmeanA) %>% 
+		mutate(dpmean_symp=dpmeanS_trans) %>% 
+		mutate(dpmean_asymp=dpmeanA_trans) %>% 
 		select(dpmean_symp, dpmean_asymp) %>% 
 		pivot_longer(everything()) %>% 
 		ggplot(aes(x=global_pars[["lod"]]-value)) + 
@@ -152,7 +152,7 @@ if(current_pars[["symptom_treatment"]]=="split"){
 			grid_off
 } else {
 	fig_dpmean_withprior <- shared_params_df %>% 
-		ggplot(aes(x=global_pars[["lod"]]-dpmean)) + 
+		ggplot(aes(x=global_pars[["lod"]]-dpmean_trans)) + 
 			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
 			geom_density(adjust=2) + 
 			geom_line(data=make_normal_prior_df(mean=prior_pars$dpmean_prior, sd=prior_pars$dpsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
@@ -167,8 +167,8 @@ if(current_pars[["symptom_treatment"]]=="split"){
 
 if(current_pars[["symptom_treatment"]]=="split"){
 	fig_wpmean_withprior <- shared_params_df %>% 
-		mutate(wpmean_symp=wpmeanS) %>% 
-		mutate(wpmean_asymp=wpmeanA) %>% 
+		mutate(wpmean_symp=wpmeanS_trans) %>% 
+		mutate(wpmean_asymp=wpmeanA_trans) %>% 
 		select(wpmean_symp, wpmean_asymp) %>% 
 		pivot_longer(everything()) %>% 
 		ggplot(aes(x=value)) + 
@@ -185,7 +185,7 @@ if(current_pars[["symptom_treatment"]]=="split"){
 			grid_off
 	} else {
 	fig_wpmean_withprior <- shared_params_df %>% 
-		ggplot(aes(x=wpmean)) + 
+		ggplot(aes(x=wpmean_trans)) + 
 			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
 			geom_density(adjust=2) + 
 			geom_line(data=make_normal_prior_df(mean=prior_pars$wpmean_prior, sd=prior_pars$wpsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
@@ -200,8 +200,8 @@ if(current_pars[["symptom_treatment"]]=="split"){
 
 if(current_pars[["symptom_treatment"]]=="split"){
 	fig_wrmean_withprior <- shared_params_df %>% 
-		mutate(wrmean_symp=wrmeanS) %>% 
-		mutate(wrmean_asymp=wrmeanA) %>% 
+		mutate(wrmean_symp=wrmeanS_trans) %>% 
+		mutate(wrmean_asymp=wrmeanA_trans) %>% 
 		select(wrmean_symp, wrmean_asymp) %>% 
 		pivot_longer(everything()) %>% 
 		ggplot(aes(x=value)) + 
@@ -218,7 +218,7 @@ if(current_pars[["symptom_treatment"]]=="split"){
 			grid_off
 	} else {
 	fig_wrmean_withprior <- shared_params_df %>% 
-		ggplot(aes(x=wrmean)) + 
+		ggplot(aes(x=wrmean_trans)) + 
 			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
 			geom_density(adjust=2) + 
 			geom_line(data=make_normal_prior_df(mean=prior_pars$wrmean_prior, sd=prior_pars$wrsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
@@ -233,8 +233,8 @@ if(current_pars[["symptom_treatment"]]=="split"){
 
 if(current_pars[["symptom_treatment"]]=="split"){
 	fig_dpmean <- shared_params_df %>% 
-		mutate(dpmean_symp=dpmeanS) %>% 
-		mutate(dpmean_asymp=dpmeanA) %>% 
+		mutate(dpmean_symp=dpmeanS_trans) %>% 
+		mutate(dpmean_asymp=dpmeanA_trans) %>% 
 		select(dpmean_symp, dpmean_asymp) %>% 
 		pivot_longer(everything()) %>% 
 		ggplot(aes(x=global_pars[["lod"]]-value)) + 
@@ -250,7 +250,7 @@ if(current_pars[["symptom_treatment"]]=="split"){
 			grid_off
 	} else{
 	fig_dpmean <- shared_params_df %>% 
-		ggplot(aes(x=global_pars[["lod"]]-dpmean)) + 
+		ggplot(aes(x=global_pars[["lod"]]-dpmean_trans)) + 
 			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
 			geom_density(adjust=2) + 
 			# scale_x_continuous(limits=c(0,NA)) + 
@@ -263,8 +263,8 @@ if(current_pars[["symptom_treatment"]]=="split"){
 
 if(current_pars[["symptom_treatment"]]=="split"){
 	fig_wpmean <- shared_params_df %>% 
-		mutate(wpmean_symp=wpmeanS) %>% 
-		mutate(wpmean_asymp=wpmeanA) %>% 
+		mutate(wpmean_symp=wpmeanS_trans) %>% 
+		mutate(wpmean_asymp=wpmeanA_trans) %>% 
 		select(wpmean_symp, wpmean_asymp) %>% 
 		pivot_longer(everything()) %>% 
 		ggplot(aes(x=value)) + 
@@ -280,7 +280,7 @@ if(current_pars[["symptom_treatment"]]=="split"){
 			grid_off
 	} else {
 	fig_wpmean <- shared_params_df %>% 
-		ggplot(aes(x=wpmean)) + 
+		ggplot(aes(x=wpmean_trans)) + 
 			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
 			geom_density(adjust=2) + 
 			# scale_x_continuous(limits=c(0,NA)) + 
@@ -293,8 +293,8 @@ if(current_pars[["symptom_treatment"]]=="split"){
 
 if(current_pars[["symptom_treatment"]]=="split"){
 fig_wrmean <- shared_params_df %>% 
-	mutate(wrmean_symp=wrmeanS) %>% 
-	mutate(wrmean_asymp=wrmeanA) %>% 
+	mutate(wrmean_symp=wrmeanS_trans) %>% 
+	mutate(wrmean_asymp=wrmeanA_trans) %>% 
 	select(wrmean_symp, wrmean_asymp) %>% 
 	pivot_longer(everything()) %>% 
 	ggplot(aes(x=value)) + 
@@ -310,7 +310,7 @@ fig_wrmean <- shared_params_df %>%
 		grid_off
 	} else {
 	fig_wrmean <- shared_params_df %>% 
-		ggplot(aes(x=wrmean)) + 
+		ggplot(aes(x=wrmean_trans)) + 
 			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
 			geom_density(adjust=2) + 
 			# scale_x_continuous(limits=c(0,NA)) + 
@@ -323,8 +323,8 @@ fig_wrmean <- shared_params_df %>%
 
 if(current_pars[["symptom_treatment"]]=="split"){
 	fig_infdurmean <- shared_params_df %>% 
-		mutate(infdurmean_symp=wpmeanS+wrmeanS) %>% 
-		mutate(infdurmean_asymp=wpmeanA+wrmeanA) %>% 
+		mutate(infdurmean_symp=wpmeanS_trans+wrmeanS_trans) %>% 
+		mutate(infdurmean_asymp=wpmeanA_trans+wrmeanA_trans) %>% 
 		select(infdurmean_symp, infdurmean_asymp) %>% 
 		pivot_longer(everything()) %>% 
 		ggplot(aes(x=value)) + 
@@ -340,7 +340,7 @@ if(current_pars[["symptom_treatment"]]=="split"){
 			grid_off
 		} else {
 		fig_infdurmean <- shared_params_df %>% 
-			mutate(infdurmean=wpmean+wrmean) %>% 
+			mutate(infdurmean=wpmean_trans+wrmean_trans) %>% 
 			select(infdurmean) %>% 
 			pivot_longer(everything()) %>% 
 			ggplot(aes(x=value)) + 
@@ -358,8 +358,8 @@ if(current_pars[["symptom_treatment"]]=="split"){
 
 if(current_pars[["symptom_treatment"]]=="split"){
 	fig_gemlmean <- shared_params_df %>% 
-		mutate(dpmean_symp=dpmeanS) %>% 
-		mutate(dpmean_asymp=dpmeanA) %>% 
+		mutate(dpmean_symp=dpmeanS_trans) %>% 
+		mutate(dpmean_asymp=dpmeanA_trans) %>% 
 		select(dpmean_symp, dpmean_asymp) %>% 
 		pivot_longer(everything()) %>% 
 		ggplot(aes(x=10^convert_Ct_logGEML(global_pars[["lod"]]-value))) + 
@@ -376,7 +376,7 @@ if(current_pars[["symptom_treatment"]]=="split"){
 			grid_off
 	} else{
 	fig_gemlmean <- shared_params_df %>% 
-		ggplot(aes(x=10^convert_Ct_logGEML(global_pars[["lod"]]-dpmean))) + 
+		ggplot(aes(x=10^convert_Ct_logGEML(global_pars[["lod"]]-dpmean_trans))) + 
 			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
 			geom_density(adjust=2) + 
 			scale_x_continuous(trans='log10', labels = trans_format("log10", math_format(10^.x))) +
@@ -392,8 +392,8 @@ if(current_pars[["symptom_treatment"]]=="split"){
 
 if(current_pars[["symptom_treatment"]]=="split"){
 	fig_apmean <- shared_params_df %>% 
-		mutate(apmean_symp=dpmeanS/wpmeanS) %>% 
-		mutate(apmean_asymp=dpmeanA/wpmeanA) %>% 
+		mutate(apmean_symp=dpmeanS_trans/wpmeanS_trans) %>% 
+		mutate(apmean_asymp=dpmeanA_trans/wpmeanA_trans) %>% 
 		select(apmean_symp, apmean_asymp) %>% 
 		pivot_longer(everything()) %>% 
 		ggplot(aes(x=value)) + 
@@ -409,7 +409,7 @@ if(current_pars[["symptom_treatment"]]=="split"){
 			grid_off
 	} else {
 	fig_apmean <- shared_params_df %>% 
-		ggplot(aes(x=dpmean/wpmean)) + 
+		ggplot(aes(x=dpmean_trans/wpmean_trans)) + 
 			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
 			geom_density(adjust=2) + 
 			# scale_x_continuous(limits=c(0,NA)) + 
@@ -423,8 +423,8 @@ if(current_pars[["symptom_treatment"]]=="split"){
 
 if(current_pars[["symptom_treatment"]]=="split"){
 	fig_armean <- shared_params_df %>% 
-		mutate(armean_symp=-dpmeanS/wrmeanS) %>% 
-		mutate(armean_asymp=-dpmeanA/wrmeanA) %>% 
+		mutate(armean_symp=-dpmeanS_trans/wrmeanS_trans) %>% 
+		mutate(armean_asymp=-dpmeanA_trans/wrmeanA_trans) %>% 
 		select(armean_symp, armean_asymp) %>% 
 		pivot_longer(everything()) %>% 
 		ggplot(aes(x=value)) + 
@@ -440,7 +440,7 @@ if(current_pars[["symptom_treatment"]]=="split"){
 			grid_off
 	} else {
 	fig_armean <- shared_params_df %>% 
-		ggplot(aes(x=-dpmean/wrmean)) + 
+		ggplot(aes(x=-dpmean_trans/wrmean_trans)) + 
 			geom_histogram(aes(y=..density..), alpha=0.2, position="identity", bins=50) + 
 			geom_density(adjust=2) + 
 			# scale_x_continuous(limits=c(0,NA)) + 
