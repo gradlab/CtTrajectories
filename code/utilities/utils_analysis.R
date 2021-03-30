@@ -699,8 +699,6 @@ convert_Ct_logGEML <- function(Ct, m_conv=-3.609714286, b_conv=40.93733333){
 }
 
 
-
-
 # the following four functions are for generating sample trajectory figures:
 srise <- function(x, dp, wp){
 	out <- dp*(1+x/wp)
@@ -741,13 +739,13 @@ make_sample_trajectory_symp <- function(shared_params_df, global_pars, siglevel=
 	xvals_clearance_A <- seq(from=0, wr_upr_A, length.out=500)
 
 	yvals_upr_proliferation_A <- unlist(lapply(xvals_proliferation_A, 
-	function(x) quantile(srise(x, shared_params_df$dpmeanA, shared_params_df$wpmeanA),0.9)))
+	function(x) quantile(srise(x, shared_params_df$dpmeanA, shared_params_df$wpmeanA),1-(1-siglevel)/2)))
 	yvals_lwr_proliferation_A <- unlist(lapply(xvals_proliferation_A, 
-	function(x) quantile(srise(x, shared_params_df$dpmeanA, shared_params_df$wpmeanA),0.1)))
+	function(x) quantile(srise(x, shared_params_df$dpmeanA, shared_params_df$wpmeanA),(1-siglevel)/2)))
 	yvals_upr_clearance_A <- unlist(lapply(xvals_clearance_A, 
-	function(x) quantile(sfall(x, shared_params_df$dpmeanA, shared_params_df$wrmeanA),0.9)))
+	function(x) quantile(sfall(x, shared_params_df$dpmeanA, shared_params_df$wrmeanA),1-(1-siglevel)/2)))
 	yvals_lwr_clearance_A <- unlist(lapply(xvals_clearance_A, 
-	function(x) quantile(sfall(x, shared_params_df$dpmeanA, shared_params_df$wrmeanA),0.1)))
+	function(x) quantile(sfall(x, shared_params_df$dpmeanA, shared_params_df$wrmeanA),(1-siglevel)/2)))
 
 	# For symptomatic:
 	wp_mean_S <- mean(shared_params_df$wpmeanS)
@@ -766,13 +764,13 @@ make_sample_trajectory_symp <- function(shared_params_df, global_pars, siglevel=
 	xvals_clearance_S <- seq(from=0, wr_upr_S, length.out=500)
 
 	yvals_upr_proliferation_S <- unlist(lapply(xvals_proliferation_S, 
-	function(x) quantile(srise(x, shared_params_df$dpmeanS, shared_params_df$wpmeanS),0.9)))
+	function(x) quantile(srise(x, shared_params_df$dpmeanS, shared_params_df$wpmeanS),1-(1-siglevel)/2)))
 	yvals_lwr_proliferation_S <- unlist(lapply(xvals_proliferation_S, 
-	function(x) quantile(srise(x, shared_params_df$dpmeanS, shared_params_df$wpmeanS),0.1)))
+	function(x) quantile(srise(x, shared_params_df$dpmeanS, shared_params_df$wpmeanS),(1-siglevel)/2)))
 	yvals_upr_clearance_S <- unlist(lapply(xvals_clearance_S, 
-	function(x) quantile(sfall(x, shared_params_df$dpmeanS, shared_params_df$wrmeanS),0.9)))
+	function(x) quantile(sfall(x, shared_params_df$dpmeanS, shared_params_df$wrmeanS),1-(1-siglevel)/2)))
 	yvals_lwr_clearance_S <- unlist(lapply(xvals_clearance_S, 
-	function(x) quantile(sfall(x, shared_params_df$dpmeanS, shared_params_df$wrmeanS),0.1)))
+	function(x) quantile(sfall(x, shared_params_df$dpmeanS, shared_params_df$wrmeanS),(1-siglevel)/2)))
 
 	if(ge==FALSE){
 		out <- ggplot() + 
@@ -804,7 +802,7 @@ make_sample_trajectory_symp <- function(shared_params_df, global_pars, siglevel=
 					yvals_upr=yvals_upr_clearance_S),
 				aes(x=xvals, ymin=lod-yvals_lwr, ymax=lod-yvals_upr), alpha=0.2, fill="red") + 
 			geom_segment(aes(x=0,xend=wr_mean_S,y=lod-dp_mean_S,yend=lod),col="red") + 
-			coord_cartesian(ylim=c(40,20), expand=FALSE) + 
+			coord_cartesian(ylim=c(40,15), expand=FALSE) + 
 			theme_minimal() + 
 			labs(x="Days from peak", y="Ct") + 
 			scale_y_reverse() + 
@@ -839,7 +837,7 @@ make_sample_trajectory_symp <- function(shared_params_df, global_pars, siglevel=
 					yvals_upr=(yvals_upr_clearance_S)),
 				aes(x=xvals, ymin=10^convert_Ct_logGEML(lod-yvals_lwr), ymax=10^convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="red") + 
 			geom_segment(aes(x=0,xend=wr_mean_S,y=10^convert_Ct_logGEML(lod-dp_mean_S),yend=10^convert_Ct_logGEML(lod)),col="red") + 
-			coord_cartesian(ylim=c(10^convert_Ct_logGEML(40),10^convert_Ct_logGEML(20)), expand=FALSE) + 
+			coord_cartesian(ylim=c(10^convert_Ct_logGEML(40),10^convert_Ct_logGEML(15)), expand=FALSE) + 
 			theme_minimal() + 
 			labs(x="Days from peak", y="Genome equivalents per ml") + 
 			scale_y_continuous(trans='log10', labels = trans_format("log10", math_format(10^.x))) + 
@@ -879,13 +877,13 @@ make_sample_trajectory <- function(shared_params_df, global_pars, siglevel=0.9, 
 	xvals_clearance <- seq(from=0, wr_upr, length.out=500)
 
 	yvals_upr_proliferation <- unlist(lapply(xvals_proliferation, 
-	function(x) quantile(srise(x, shared_params_df$dpmean, shared_params_df$wpmean),0.9)))
+	function(x) quantile(srise(x, shared_params_df$dpmean, shared_params_df$wpmean),1-(1-siglevel)/2)))
 	yvals_lwr_proliferation <- unlist(lapply(xvals_proliferation, 
-	function(x) quantile(srise(x, shared_params_df$dpmean, shared_params_df$wpmean),0.1)))
+	function(x) quantile(srise(x, shared_params_df$dpmean, shared_params_df$wpmean),(1-siglevel)/2)))
 	yvals_upr_clearance <- unlist(lapply(xvals_clearance, 
-	function(x) quantile(sfall(x, shared_params_df$dpmean, shared_params_df$wrmean),0.9)))
+	function(x) quantile(sfall(x, shared_params_df$dpmean, shared_params_df$wrmean),1-(1-siglevel)/2)))
 	yvals_lwr_clearance <- unlist(lapply(xvals_clearance, 
-	function(x) quantile(sfall(x, shared_params_df$dpmean, shared_params_df$wrmean),0.1)))
+	function(x) quantile(sfall(x, shared_params_df$dpmean, shared_params_df$wrmean),(1-siglevel)/2)))
 
 	if(ge==FALSE){
 		out <- ggplot() + 
@@ -903,7 +901,7 @@ make_sample_trajectory <- function(shared_params_df, global_pars, siglevel=0.9, 
 					yvals_upr=yvals_upr_clearance),
 				aes(x=xvals, ymin=lod-yvals_lwr, ymax=lod-yvals_upr), alpha=0.2, fill="grey") + 
 			geom_segment(aes(x=0,xend=wr_mean,y=lod-dp_mean,yend=lod),col="black") + 
-			coord_cartesian(ylim=c(40,20), expand=FALSE) + 
+			coord_cartesian(ylim=c(40,15), expand=FALSE) + 
 			theme_minimal() + 
 			labs(x="Days from peak", y="Ct") + 
 			scale_y_reverse() + 
@@ -924,7 +922,7 @@ make_sample_trajectory <- function(shared_params_df, global_pars, siglevel=0.9, 
 					yvals_upr=(yvals_upr_clearance)),
 				aes(x=xvals, ymin=10^convert_Ct_logGEML(lod-yvals_lwr), ymax=10^convert_Ct_logGEML(lod-yvals_upr)), alpha=0.2, fill="grey") + 
 			geom_segment(aes(x=0,xend=wr_mean,y=10^convert_Ct_logGEML(lod-dp_mean),yend=10^convert_Ct_logGEML(lod)),col="black") + 
-			coord_cartesian(ylim=c(10^convert_Ct_logGEML(40),10^convert_Ct_logGEML(20)), expand=FALSE) + 
+			coord_cartesian(ylim=c(10^convert_Ct_logGEML(40),10^convert_Ct_logGEML(15)), expand=FALSE) + 
 			theme_minimal() + 
 			labs(x="Days from peak", y="Genome equivalents per ml") + 
 			scale_y_continuous(trans='log10', labels = trans_format("log10", math_format(10^.x))) + 

@@ -2,7 +2,7 @@
 
 # Report for symptomatic/asymptomatic split: 
 
-conflevel <- 0.95
+conflevel <- 0.90
 
 parset <- 1;
 source('code/analysis/loadfit.R')

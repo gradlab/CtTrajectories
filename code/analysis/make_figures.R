@@ -31,6 +31,12 @@ peak_ct_fit_curve <- geom_line(data=make_normal_prior_df(mean=peak_ct_normal_fit
 # Generate figures
 # =============================================================================
 
+jitterfactor <- 0.01
+meanvalsindiv <- params_df %>% 
+	mutate(infdur=wp+wr) %>%
+	group_by(id) %>% 
+	summarise(tp=mean(tp), dp=mean(dp), wp=mean(wp), wr=mean(wr), infdur=mean(infdur), symptomatic=first(symptomatic))
+
 figlist_ct_dat_refined <- with(as.list(global_pars),{
 	ct_dat_clean %>% 
 	clean_person_id() %>%
@@ -143,8 +149,9 @@ if(current_pars[["symptom_treatment"]]=="split"){
 			geom_density(aes(col=name), adjust=2) + 
 			geom_line(data=make_normal_prior_df(mean=prior_pars$dpmean_prior, sd=prior_pars$dpsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
 			scale_x_continuous(limits=c(0,NA)) + 
-			scale_color_manual(values=c("dpmean_symp"="red","dpmean_asymp"="blue")) + 
+			scale_color_manual(values=c("dpmean_symp"="red","dpmean_asymp"="blue","1"="red","0"="blue")) + 
 			scale_fill_manual(values=c("dpmean_symp"="red","dpmean_asymp"="blue")) + 
+			geom_jitter(data=meanvalsindiv, aes(x=global_pars[["lod"]]-dp, y=jitterfactor*symptomatic, col=factor(symptomatic)), alpha=0.4, width=0, height=0.003) + 
 			labs(x="Mean peak Ct", y="Density") + 
 			theme_minimal() + 
 			theme(legend.position="none", text=element_text(size=18)) + 
@@ -157,6 +164,7 @@ if(current_pars[["symptom_treatment"]]=="split"){
 			geom_density(adjust=2) + 
 			geom_line(data=make_normal_prior_df(mean=prior_pars$dpmean_prior, sd=prior_pars$dpsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
 			scale_x_continuous(limits=c(0,NA)) + 
+			geom_jitter(data=meanvalsindiv, aes(x=global_pars[["lod"]]-dp, y=0), alpha=0.4, width=0, height=0.003)  + 
 			labs(x="Mean peak Ct", y="Density") + 
 			theme_minimal() + 
 			theme(legend.position="none", text=element_text(size=18)) + 
@@ -176,8 +184,9 @@ if(current_pars[["symptom_treatment"]]=="split"){
 			geom_density(aes(col=name), adjust=2) + 
 			geom_line(data=make_normal_prior_df(mean=prior_pars$wpmean_prior, sd=prior_pars$wpsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
 			scale_x_continuous(limits=c(0,NA)) + 
-			scale_color_manual(values=c("wpmean_symp"="red","wpmean_asymp"="blue")) + 
+			scale_color_manual(values=c("wpmean_symp"="red","wpmean_asymp"="blue","1"="red","0"="blue")) + 
 			scale_fill_manual(values=c("wpmean_symp"="red","wpmean_asymp"="blue")) + 
+			geom_jitter(data=meanvalsindiv, aes(x=wp, y=jitterfactor*symptomatic, col=factor(symptomatic)), alpha=0.4, width=0, height=0.003)  + 
 			labs(x="Mean proliferation stage duration (days)", y="Density") + 
 			theme_minimal() + 
 			theme(legend.position="none", text=element_text(size=18)) + 
@@ -190,6 +199,7 @@ if(current_pars[["symptom_treatment"]]=="split"){
 			geom_density(adjust=2) + 
 			geom_line(data=make_normal_prior_df(mean=prior_pars$wpmean_prior, sd=prior_pars$wpsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
 			scale_x_continuous(limits=c(0,NA)) + 
+			geom_jitter(data=meanvalsindiv, aes(x=wp, y=jitterfactor*symptomatic), alpha=0.4, width=0, height=0.003)  +
 			labs(x="Mean proliferation stage duration (days)", y="Density") + 
 			theme_minimal() + 
 			theme(legend.position="none", text=element_text(size=18)) + 
@@ -209,8 +219,9 @@ if(current_pars[["symptom_treatment"]]=="split"){
 			geom_density(aes(col=name), adjust=2) + 
 			geom_line(data=make_normal_prior_df(mean=prior_pars$wrmean_prior, sd=prior_pars$wrsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
 			scale_x_continuous(limits=c(0,NA)) + 
-			scale_color_manual(values=c("wrmean_symp"="red","wrmean_asymp"="blue")) + 
+			scale_color_manual(values=c("wrmean_symp"="red","wrmean_asymp"="blue","1"="red","0"="blue")) + 
 			scale_fill_manual(values=c("wrmean_symp"="red","wrmean_asymp"="blue")) + 
+			geom_jitter(data=meanvalsindiv, aes(x=wr, y=jitterfactor*symptomatic, col=factor(symptomatic)), alpha=0.4, width=0, height=0.003)  + 
 			labs(x="Mean clearance stage duration (days)", y="Density") + 
 			theme_minimal() + 
 			theme(legend.position="none", text=element_text(size=18)) + 
@@ -223,6 +234,7 @@ if(current_pars[["symptom_treatment"]]=="split"){
 			geom_density(adjust=2) + 
 			geom_line(data=make_normal_prior_df(mean=prior_pars$wrmean_prior, sd=prior_pars$wrsd_prior, pmin=0.001, pmax=0.999, step=0.1), aes(x=x, y=density), col="black", linetype="dashed") + 
 			scale_x_continuous(limits=c(0,NA)) + 
+			geom_jitter(data=meanvalsindiv, aes(x=wr, y=jitterfactor*symptomatic), alpha=0.4, width=0, height=0.003)  + 
 			labs(x="Mean clearance stage duration (days)", y="Density") + 
 			theme_minimal() + 
 			theme(legend.position="none", text=element_text(size=18)) + 
