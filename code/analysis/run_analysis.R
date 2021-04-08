@@ -42,3 +42,5 @@ save(final_fitlist, file="output/revisions/final_fitlist.RData")
 source('code/analysis/report_results.R')
 
 # launch_shinystan_nonblocking(final_fitlist[[1]])
+
+source('code/data_parsing/viz_ct_data.R')

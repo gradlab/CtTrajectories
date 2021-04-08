@@ -944,3 +944,40 @@ truncnormmean <- function(mu, sigma, T0, T1){
 	return(out)
 }
 
+
+# Given coefficients, this calculates the value of the breakpoint regression line with breakpoint at 't' for a given vector of values 'x': 
+bpfunc <- function(params,t,x){
+	b0 <- params[1]
+	b1 <- params[2]
+	b2 <- params[3]
+	out <- b0 + b1*x + b2*(x-t)*as.numeric(x>t)
+	return(out)
+}
+
+# This calculates the SSE for a breakpoint regression defined by the coefficients in 'params', the breakpoint at 't', and a data frame with independent variable x and dependent variable y: 
+bpfunc_sse <- function(params,t,x,y){
+	out <- sum((y - bpfunc(params,t,x))^2)
+}
+
+# This calculates the log likelihood of the best-fit breakpoint regression with breakpoint at time t and data given in 'df' with independent variable in 'xcol' and dependent variable in 'ycol': 
+bpll <- function(df, t, xcol, ycol){
+	x <- df[,xcol]
+	y <- df[,ycol]
+	z <- optim(c(1, 0, 0), bpfunc_sse, t=t, x=x, y=y)
+	sseval <- bpfunc_sse(z$par,t,x,y)
+	return(-sseval)
+}
+
+# This yields the best-fit breakpoint linear regression given data in 'df', a breakpoint at 't', dependentt variable in 'xcol', and dependent variable in 'ycol'. 
+bpfit <- function(df, t, xcol, ycol){
+	z <- optim(c(1, 0, 0), bpfunc_sse, t=t, x=df[,xcol], y=df[,ycol])
+	xfitvals <- seq(min(df[,xcol]), max(df[,xcol]), length.out=100)
+	yfitvals <- bpfunc(z$par, t, xfitvals)
+	fitdf <- data.frame(xcoltemp=xfitvals, ycoltemp=yfitvals) %>% mutate(data.type="fit")
+	names(fitdf)[1] <- xcol
+	names(fitdf)[2] <- ycol
+	df <- df %>% mutate(data.type="raw") %>% bind_rows(fitdf)
+	return(df)
+}
+
+
