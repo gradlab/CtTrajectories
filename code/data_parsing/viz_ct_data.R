@@ -17,18 +17,20 @@ source('code/analysis/refine_data.R')
 # =============================================================================
 
 # Number of positive  tests per person: ---------------------------------------
-n_positive_df <- ct_dat_clean %>% 
+n_positive_df <- ct_dat_refined %>% 
 	mutate(ispositive=case_when(CT.Mean<40~1, TRUE~0)) %>%
 	group_by(Person.ID) %>%
 	summarise(n_positive=sum(ispositive), Symptomatic=max(Symptomatic)) %>%
 	ungroup() %>% 
 	mutate(Symptomatic=case_when(Symptomatic=="Yes"~1, TRUE~0))
 
-n_positive_df %>% 
+fig_npositive <- n_positive_df %>% 
 	ggplot(aes(x=n_positive)) + 
 		geom_histogram(binwidth=1, fill="white", col="black") + 
 		scale_x_continuous(breaks=1:9) + 
-		theme_minimal() 
+		theme_minimal() +
+		theme(text=element_text(size=16))
+ggsave(fig_npositive, file="~/Desktop/npositive.pdf", width=8, height=5)
 
 n_positive_df %>% 
 	ungroup() %>% 
@@ -39,17 +41,19 @@ n_positive_df %>%
 	summarise(mean=mean(n_positive), min=min(n_positive), Q25=quantile(n_positive, 0.25), median=median(n_positive), Q75=quantile(n_positive, 0.75), max=max(n_positive), n=n())
 
 # Min Ct per person: ----------------------------------------------------------
-min_ct_df <- ct_dat_clean %>% 
+min_ct_df <- ct_dat_refined %>% 
 	group_by(Person.ID) %>% 
 	summarise(minCt = min(CT.Mean), Symptomatic=max(Symptomatic)) %>%
 	ungroup() %>% 
 	mutate(Symptomatic=case_when(Symptomatic=="Yes"~1, TRUE~0))
 
-min_ct_df %>% 
+fig_minct <- min_ct_df %>% 
 	ggplot(aes(x=minCt)) + 
 		geom_histogram(binwidth=2, fill="white", col="black") + 
 		# scale_x_continuous(breaks=1:9) + 
-		theme_minimal() 
+		theme_minimal() +
+		theme(text=element_text(size=16))
+ggsave(fig_minct, file="~/Desktop/minct.pdf", width=8, height=5)
 
 min_ct_df %>% 
 	ungroup() %>% 
@@ -104,11 +108,13 @@ fig_bpfits <- bpfits %>%
 		scale_color_manual(values=c(symptom_color_vec,"symptomatic"="red","asymptomatic"="blue")) + 
 		scale_x_continuous(breaks=seq(from=-14,to=35,by=7)) + 
 		theme_minimal() + 
-		theme(legend.position="none") + 
+		theme(legend.position="none", text=element_text(size=16)) + 
 		labs(x="Days from min Ct", y="Ct")
 
 fig_bpfits_withpoints <- fig_bpfits + 
 	geom_point(data=indiv_data, aes(col=factor(id)), alpha=0.5, size=0.5) 
+ggsave(fig_bpfits_withpoints,file="~/Desktop/bpfits_withpoints.pdf", width=8, height=5)
+
 
 bpfits_overall <- indiv_data %>% 
 	split(.$symptomatic) %>% 
@@ -132,3 +138,5 @@ fig_bpfits_withpoints_facet <- bpfits %>%
 		labs(x="Days from min Ct", y="Ct") + 
 		geom_point(data=indiv_data, aes(col=factor(id)), alpha=0.5, size=0.5) +
 		facet_wrap(~ factor(id))
+# ggsave(fig_bpfits_withpoints_facet,file="~/Desktop/bpfits_withpoints_facet.pdf", width=8, height=10)
+
