@@ -805,7 +805,7 @@ make_sample_trajectory_symp <- function(shared_params_df, global_pars, siglevel=
 			coord_cartesian(ylim=c(40,15), expand=FALSE) + 
 			theme_minimal() + 
 			labs(x="Days from peak", y="Ct") + 
-			scale_y_reverse() + 
+			scale_y_reverse(sec.axis=sec_axis(~convert_Ct_logGEML(.), name=expression(log[10]~RNA~copies/ml))) + 
 			theme(text=element_text(size=18))
 	} else {
 		out <- ggplot() + 
@@ -904,7 +904,7 @@ make_sample_trajectory <- function(shared_params_df, global_pars, siglevel=0.9, 
 			coord_cartesian(ylim=c(40,15), expand=FALSE) + 
 			theme_minimal() + 
 			labs(x="Days from peak", y="Ct") + 
-			scale_y_reverse() + 
+			scale_y_reverse(sec.axis=sec_axis(~convert_Ct_logGEML(.), name=expression(log[10]~RNA~copies/ml))) + 
 			theme(text=element_text(size=18))
 	} else {
 		out <- ggplot() + 

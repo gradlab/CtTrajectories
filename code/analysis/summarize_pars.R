@@ -9,17 +9,23 @@ if(current_pars[["symptom_treatment"]]=="split"){
 		mutate(wpmeanA_trans=truncnormmean(wpmeanA,wpsd,0,prior_pars$wpmax)) %>%
 		mutate(wpmeanS_trans=truncnormmean(wpmeanS,wpsd,0,prior_pars$wpmax)) %>%
 		mutate(wrmeanA_trans=truncnormmean(wrmeanA,wrsd,0,prior_pars$wrmax)) %>%
-		mutate(wrmeanS_trans=truncnormmean(wrmeanS,wrsd,0,prior_pars$wrmax))
+		mutate(wrmeanS_trans=truncnormmean(wrmeanS,wrsd,0,prior_pars$wrmax)) %>%
+		mutate(upslopeA=dpmeanA_trans/wpmeanA_trans) %>%
+		mutate(upslopeS=dpmeanS_trans/wpmeanS_trans) %>%
+		mutate(dnslopeA=dpmeanA_trans/wrmeanA_trans) %>%
+		mutate(dnslopeS=dpmeanS_trans/wrmeanS_trans)
 	} else {
 	shared_params_df <- make_shared_params_df(params, c("dpmean","wpmean","wrmean","dpsd","wpsd","wrsd"))  %>% 
 		mutate(dpmean_trans=truncnormmean(dpmean,dpsd,0,global_pars[["lod"]])) %>%
 		mutate(wpmean_trans=truncnormmean(wpmean,wpsd,0,prior_pars$wpmax)) %>%
-		mutate(wrmean_trans=truncnormmean(wrmean,wrsd,0,prior_pars$wrmax)) 
+		mutate(wrmean_trans=truncnormmean(wrmean,wrsd,0,prior_pars$wrmax)) %>%
+		mutate(upslope=dpmean_trans/wpmean_trans) %>%
+		mutate(dnslope=dpmean_trans/wrmean_trans)
 	}
 
 params_df <- indiv_params_df %>% 
-	left_join(shared_params_df, by="iteration") %>% 
-	select(-iteration) 
+	left_join(shared_params_df, by="iteration") # %>% 
+	# select(-iteration) 
 
 params_summary <- summary(ct_fit)$summary %>% 
 	as.data.frame() %>% 

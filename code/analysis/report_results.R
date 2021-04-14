@@ -2,7 +2,7 @@
 
 # Report for symptomatic/asymptomatic split: 
 
-conflevel <- 0.90
+conflevel <- 0.95
 
 parset <- 1;
 source('code/analysis/loadfit.R')
@@ -27,6 +27,16 @@ reportsummary(
 	shared_params_df$wpmeanS_trans+shared_params_df$wrmeanS_trans,
 	conflevel)
 
+reportsummary(
+	"Symptomatic proliferation rate:",
+	(shared_params_df$dpmeanS_trans)/(shared_params_df$wpmeanS_trans),
+	conflevel)
+
+reportsummary(
+	"Symptomatic clearance rate:",
+	(shared_params_df$dpmeanS_trans)/(shared_params_df$wrmeanS_trans),
+	conflevel)
+
 print("")
 
 reportsummary(
@@ -47,6 +57,16 @@ reportsummary(
 reportsummary(
 	"Asymptomatic acute infection duration:",
 	shared_params_df$wpmeanA_trans+shared_params_df$wrmeanA_trans,
+	conflevel)
+
+reportsummary(
+	"Asymptomatic proliferation rate:",
+	(shared_params_df$dpmeanA_trans)/(shared_params_df$wpmeanA_trans),
+	conflevel)
+
+reportsummary(
+	"Asymptomatic clearance rate:",
+	(shared_params_df$dpmeanA_trans)/(shared_params_df$wrmeanA_trans),
 	conflevel)
 
 print("")
@@ -72,4 +92,14 @@ reportsummary(
 reportsummary(
 	"Overall acute infection duration:",
 	shared_params_df$wpmean_trans+shared_params_df$wrmean_trans,
+	conflevel)
+
+reportsummary(
+	"Overall proliferation rate:",
+	(shared_params_df$dpmean_trans)/(shared_params_df$wpmean_trans),
+	conflevel)
+
+reportsummary(
+	"Overall clearance rate:",
+	(shared_params_df$dpmean_trans)/(shared_params_df$wrmean_trans),
 	conflevel)
