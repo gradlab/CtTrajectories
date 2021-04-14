@@ -30,7 +30,7 @@ fig_npositive <- n_positive_df %>%
 		scale_x_continuous(breaks=1:9) + 
 		theme_minimal() +
 		theme(text=element_text(size=16))
-ggsave(fig_npositive, file="~/Desktop/npositive.pdf", width=8, height=5)
+ggsave(fig_npositive, file="figures/datviz/npositive.pdf", width=8, height=5)
 
 n_positive_df %>% 
 	ungroup() %>% 
@@ -53,7 +53,7 @@ fig_minct <- min_ct_df %>%
 		# scale_x_continuous(breaks=1:9) + 
 		theme_minimal() +
 		theme(text=element_text(size=16))
-ggsave(fig_minct, file="~/Desktop/minct.pdf", width=8, height=5)
+ggsave(fig_minct, file="figures/datviz/minct.pdf", width=8, height=5)
 
 min_ct_df %>% 
 	ungroup() %>% 
@@ -104,7 +104,8 @@ bpfits <- indiv_data %>%
 fig_bpfits <- bpfits %>% 
 	ggplot(aes(x=t, y=y, col=factor(id))) + 
 		geom_line(size=0.2, alpha=0.5) + 
-		scale_y_reverse(limits=c(40,15)) + 
+		# scale_y_reverse(limits=c(40,15)) + 
+		scale_y_reverse(limits=c(40,15),breaks=c(40,35,30,25,20,15), labels=c("(-)","35","30","25","20","15"), sec.axis=sec_axis(~convert_Ct_logGEML(.), name=expression(log[10]~RNA~copies/ml))) +
 		scale_color_manual(values=c(symptom_color_vec,"symptomatic"="red","asymptomatic"="blue")) + 
 		scale_x_continuous(breaks=seq(from=-14,to=35,by=7)) + 
 		theme_minimal() + 
@@ -113,7 +114,7 @@ fig_bpfits <- bpfits %>%
 
 fig_bpfits_withpoints <- fig_bpfits + 
 	geom_point(data=indiv_data, aes(col=factor(id)), alpha=0.5, size=0.5) 
-ggsave(fig_bpfits_withpoints,file="~/Desktop/bpfits_withpoints.pdf", width=8, height=5)
+ggsave(fig_bpfits_withpoints,file="figures/datviz/bpfits_withpoints.pdf", width=8, height=5)
 
 
 bpfits_overall <- indiv_data %>% 
@@ -138,5 +139,37 @@ fig_bpfits_withpoints_facet <- bpfits %>%
 		labs(x="Days from min Ct", y="Ct") + 
 		geom_point(data=indiv_data, aes(col=factor(id)), alpha=0.5, size=0.5) +
 		facet_wrap(~ factor(id))
-# ggsave(fig_bpfits_withpoints_facet,file="~/Desktop/bpfits_withpoints_facet.pdf", width=8, height=10)
+
+
+# =============================================================================
+# Gap between observations 
+# =============================================================================
+
+fig_interval <- ct_dat_clean %>% 
+	group_by(Person.ID) %>% 
+	mutate(Date.Index.Lag1=lag(Date.Index)) %>%
+	mutate(DateDiff=Date.Index - Date.Index.Lag1) %>%
+	filter(!is.na(DateDiff)) %>% 
+	ggplot(aes(x=DateDiff)) + 
+		geom_histogram(aes(y=..density..), binwidth=1, col="black", fill="gray", size=0.2) + 
+		scale_x_continuous(limits=c(0,12.5), breaks=0:12, minor_breaks=0:12) + 
+		labs(x="Interval between consecutive tests (days)", y="Proportion of tests") + 
+		theme_minimal() + 
+		theme(text=element_text(size=14))
+ggsave(fig_interval,file="figures/datviz/interval.pdf", width=8, height=5)
+
+interval_summary <- ct_dat_clean %>% 
+	group_by(Person.ID) %>% 
+	mutate(Date.Index.Lag1=lag(Date.Index)) %>%
+	mutate(DateDiff=Date.Index - Date.Index.Lag1) %>%
+	filter(!is.na(DateDiff)) %>% 
+	mutate(LEQ1=case_when(DateDiff<=1~1, TRUE~0)) %>%
+	mutate(LEQ4=case_when(DateDiff<=4~1, TRUE~0)) %>%
+	mutate(GreaterThan12=case_when(DateDiff>12~1, TRUE~0)) %>%
+	ungroup() %>% 
+	summarise(N=n(), 
+		NLEQ1=sum(LEQ1), PropLEQ1=NLEQ1/N, 
+		NLEQ4=sum(LEQ4), PropLEQ4=NLEQ4/N, 
+		NOver12=sum(GreaterThan12), PropOver12=NOver12/N)
+print(interval_summary) 
 
