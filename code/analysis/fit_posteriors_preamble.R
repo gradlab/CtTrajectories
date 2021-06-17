@@ -59,17 +59,17 @@ prior_pars <- with(as.list(current_pars),{
 	list(
 	symp=symp,
 	tpsd=2,
-	dpmean_prior=global_pars[["lod"]]/2,
-	dpsd_prior=global_pars[["lod"]]/6,
-	wpmax=14,
-	wpmean_prior=14/2,
-	wpsd_prior=14/6,
-	wrmax=30,
-	wrmean_prior=30/2,
-	wrsd_prior=30/6,
-	sigma_max=10,
-	sigma_prior_scale=5,
-	lambda=0.01,
+	dpmean_prior=as.numeric(dpmean_prior),
+	dpsd_prior=as.numeric(dpsd_prior),
+	wpmax=as.numeric(wpmax),
+	wpmean_prior=as.numeric(wpmean_prior),
+	wpsd_prior=as.numeric(wpsd_prior),
+	wrmax=as.numeric(wrmax),
+	wrmean_prior=as.numeric(wrmean_prior),
+	wrsd_prior=as.numeric(wrsd_prior),
+	sigma_max=as.numeric(sigma_max),
+	sigma_prior_scale=as.numeric(sigma_prior_scale),
+	lambda=as.numeric(lambda),
 	fpmean=1/log(10)  # so that 90% of mass is <1 and 99% is <2
 	) 
 	})

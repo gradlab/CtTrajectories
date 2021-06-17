@@ -100,6 +100,8 @@ bpfits <- indiv_data %>%
 	bind_rows(.id="id") %>%
 	mutate(id=as.integer(id)) %>% 
 	left_join(symptom_map, by="id")
+# write_csv(bpfits, "figure_data/Fig2/bpfits.csv")
+
 
 fig_bpfits <- bpfits %>% 
 	ggplot(aes(x=t, y=y, col=factor(id))) + 
@@ -110,7 +112,7 @@ fig_bpfits <- bpfits %>%
 		scale_x_continuous(breaks=seq(from=-14,to=35,by=7)) + 
 		theme_minimal() + 
 		theme(legend.position="none", text=element_text(size=16)) + 
-		labs(x="Days from min Ct", y="Ct")
+		labs(x="Days from lowest Ct", y="Ct")
 
 fig_bpfits_withpoints <- fig_bpfits + 
 	geom_point(data=indiv_data, aes(col=factor(id)), alpha=0.5, size=0.5) 
@@ -124,6 +126,7 @@ bpfits_overall <- indiv_data %>%
 	map(~ select(., t, y)) %>% 
 	bind_rows(.id="symptomatic") %>%
 	mutate(symptomstatus=case_when(symptomatic==1~"symptomatic",TRUE~"asymptomatic"))
+# write_csv(indiv_data, "figure_data/Fig2/indiv_data.csv")
 
 fig_bpfits_withpoints_withoverall <- fig_bpfits_withpoints + 
 	geom_line(data=bpfits_overall, aes(col=symptomstatus)) 
@@ -136,7 +139,7 @@ fig_bpfits_withpoints_facet <- bpfits %>%
 		scale_x_continuous(breaks=seq(from=-14,to=35,by=7)) + 
 		theme_minimal() + 
 		theme(legend.position="none") + 
-		labs(x="Days from min Ct", y="Ct") + 
+		labs(x="Days from lowest Ct", y="Ct") + 
 		geom_point(data=indiv_data, aes(col=factor(id)), alpha=0.5, size=0.5) +
 		facet_wrap(~ factor(id))
 

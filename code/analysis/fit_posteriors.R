@@ -28,7 +28,7 @@ ct_fit <- sampling(ct_model,
 		lambda=as.list(prior_pars)$lambda,
 		fpmean=as.list(prior_pars)$fpmean,
 		epsilon=(indiv_data$adjusted)*(as.list(global_pars)$adjusted_sd)), 
-	iter=500, chains=4)
+	iter=2500, chains=4)
 # , control = list(adapt_delta=0.99)
 
 fit_endq <- Sys.time()

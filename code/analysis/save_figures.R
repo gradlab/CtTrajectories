@@ -44,4 +44,8 @@ ggsave(fig_ct_trajectory_inference,file=paste0(figsave_dir_sensitivity,"ct_traje
 ggsave(fig_ge_trajectory_inference,file=paste0(figsave_dir_sensitivity,"ge_trajectory_inference.pdf"), width=8, height=5)
 ggsave(fig_eff_se,file=paste0(figsave_dir_sensitivity,"eff_se.pdf"), width=8, height=5)
 ggsave(fig_ninf,file=paste0(figsave_dir_sensitivity,"ninf.pdf"), width=8, height=5)
+ggsave(fig_eff_se_ic35,file=paste0(figsave_dir_sensitivity,"eff_se_ic35.pdf"), width=8, height=5)
+ggsave(fig_ninf_ic35,file=paste0(figsave_dir_sensitivity,"ninf_ic35.pdf"), width=8, height=5)
+ggsave(fig_eff_se_ic20,file=paste0(figsave_dir_sensitivity,"eff_se_ic20.pdf"), width=8, height=5)
+ggsave(fig_ninf_ic20,file=paste0(figsave_dir_sensitivity,"ninf_ic20.pdf"), width=8, height=5)
 
