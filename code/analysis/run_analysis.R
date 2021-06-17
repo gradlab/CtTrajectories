@@ -43,11 +43,11 @@ for(parset in 1:length(masterpars)){ #1:length(masterpars)
 			file="output/params_df_split.csv")
 	}
 
-	if(parset==2){ ########
+	if(parset==2){ 
 		write_csv(params_df %>%
 			mutate(geml=convert_Ct_logGEML((global_pars[["lod"]] - dp))) %>%
-			mutate(gemlA_trans=convert_Ct_logGEML((global_pars[["lod"]] - dpmeanA_trans))) %>%
-			mutate(gemlS_trans=convert_Ct_logGEML((global_pars[["lod"]] - dpmeanS_trans))), 
+			mutate(geml_trans=convert_Ct_logGEML((global_pars[["lod"]] - dpmean_trans))) %>% 
+			select(id_clean, iteration, tp, dp, wp, wr, symptomatic, dpmean_trans, wpmean_trans, wrmean_trans),
 			file="output/params_df_combined.csv")
 	}
 		
