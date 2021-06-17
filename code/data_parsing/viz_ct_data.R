@@ -161,6 +161,14 @@ fig_interval <- ct_dat_clean %>%
 		theme(text=element_text(size=14))
 ggsave(fig_interval,file="figures/datviz/interval.pdf", width=8, height=5)
 
+# write_csv(ct_dat_clean %>% 
+# 	group_by(Person.ID) %>% 
+# 	mutate(Date.Index.Lag1=lag(Date.Index)) %>%
+# 	mutate(DateDiff=Date.Index - Date.Index.Lag1) %>%
+# 	filter(!is.na(DateDiff)) %>% 
+# 	select(DateDiff),
+# 	file="figure_data/FigS1/datediff.csv")
+
 interval_summary <- ct_dat_clean %>% 
 	group_by(Person.ID) %>% 
 	mutate(Date.Index.Lag1=lag(Date.Index)) %>%

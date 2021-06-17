@@ -33,9 +33,27 @@ for(parset in 1:length(masterpars)){ #1:length(masterpars)
 	source('code/analysis/make_figures.R')
 	source('code/analysis/save_figures.R')
 	source('code/analysis/save_figures_png.R')
+
+	if(parset==1){
+		write_csv(params_df %>% 
+			mutate(geml=convert_Ct_logGEML((global_pars[["lod"]] - dp))) %>%
+			mutate(gemlA_trans=convert_Ct_logGEML((global_pars[["lod"]] - dpmeanA_trans))) %>%
+			mutate(gemlS_trans=convert_Ct_logGEML((global_pars[["lod"]] - dpmeanS_trans))) %>% 
+			select(id_clean, iteration, tp, dp, wp, wr, symptomatic, dpmeanA_trans, dpmeanS_trans, wpmeanA_trans, wpmeanS_trans, wrmeanA_trans, wrmeanS_trans), 
+			file="output/params_df_split.csv")
+	}
+
+	if(parset==2){ ########
+		write_csv(params_df %>%
+			mutate(geml=convert_Ct_logGEML((global_pars[["lod"]] - dp))) %>%
+			mutate(gemlA_trans=convert_Ct_logGEML((global_pars[["lod"]] - dpmeanA_trans))) %>%
+			mutate(gemlS_trans=convert_Ct_logGEML((global_pars[["lod"]] - dpmeanS_trans))), 
+			file="output/params_df_combined.csv")
+	}
 		
 	# Save the figures
 	final_fitlist[[parset]] <- ct_fit
+	}
 
 }
 

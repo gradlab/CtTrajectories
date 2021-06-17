@@ -18,6 +18,9 @@ fig_yale_florida_regression <- ct_dat_clean %>%
 		xlim(min(ct_dat_clean$CT.T1, na.rm=TRUE), max(ct_dat_clean$CT.T1, na.rm=TRUE)) + 
 		labs(x="Florida Ct (T1)", y="Yale Ct (N1)")
 
+# write_csv(ct_dat_clean %>% 
+# 	filter(!is.na(CT.T1) & !is.na(N1_CT_Value)), "figure_data/FigS15/figs15.csv")
+
 # Run the regression:
 ct_reg_fit <- ct_dat_clean %>% 
 	filter(!is.na(CT.T1) & !is.na(N1_CT_Value)) %>%
@@ -42,6 +45,8 @@ fig_yale_florida_residuals <- ct_resid_df %>%
 		theme(text=element_text(size=14)) + 
 		labs(x="Florida Ct (T1)", y="Yale Ct (N1) residual")
 
+# write_csv(ct_resid_df, file="figure_data/FigS16/figs16.csv")
+
 # QQ plot of the residuals: 
 fig_yale_florida_qq <- ct_resid_df %>%
 	mutate(N1_CT_Value_resid_std = (N1_CT_Value_resid - mean(N1_CT_Value_resid))/sd(N1_CT_Value_resid))  %>% 
@@ -51,3 +56,6 @@ fig_yale_florida_qq <- ct_resid_df %>%
 		theme_minimal() + 
 		theme(text=element_text(size=14)) + 
 		labs(x="Normal(0,1)", y="Standardized Yale Ct (N1) residual")
+
+# write_csv(ct_resid_df %>%
+# 	mutate(N1_CT_Value_resid_std = (N1_CT_Value_resid - mean(N1_CT_Value_resid))/sd(N1_CT_Value_resid)), file="figure_data/FigS17/figs17.csv")

@@ -670,6 +670,14 @@ fig_infection_ppv_ma_raw <- ct_probs_ma %>%
 		theme(text=element_text(size=18)) + 
 		labs(x="Mean Ct for 5-unit sliding window", y="Probability of acute infection")
 
+# write_csv(ct_probs_ma %>% 
+# 	mutate(Ct.Change="Raw") %>%
+# 	mutate(Infection=Onset+Resolution) %>%
+# 	select(-Onset,-Resolution,-Chatter) %>%
+# 	mutate(Infection_Upr=make_wald_v(Overall_n, Infection, 0.1, "upr")) %>%
+# 	mutate(Infection_Lwr=make_wald_v(Overall_n, Infection, 0.1, "lwr")),
+# 	"figure_data/Fig4/fig4adat.csv")
+
 fig_infection_ppv_ma_paired <- paired_ct_probs_ma %>% 
 	mutate(Infection=Onset+Resolution) %>%
 	select(-Onset,-Resolution,-Chatter) %>%
@@ -686,6 +694,13 @@ fig_infection_ppv_ma_paired <- paired_ct_probs_ma %>%
 		theme_minimal() + 
 		theme(text=element_text(size=18), legend.position="none") + 
 		labs(x="Mean Ct for 5-unit sliding window", y="Probability of acute infection")
+
+# write_csv(paired_ct_probs_ma %>% 
+# 	mutate(Infection=Onset+Resolution) %>%
+# 	select(-Onset,-Resolution,-Chatter) %>%
+# 	mutate(Infection_Upr=make_wald_v(Overall_n, Infection, 0.1, "upr")) %>%
+# 	mutate(Infection_Lwr=make_wald_v(Overall_n, Infection, 0.1, "lwr")),
+# 	"figure_data/Fig4/fig4cdat.csv")
 
 fig_onset_given_infection_ppv_ma <- ct_probs_ma %>% 
 	select(-Chatter) %>%
@@ -735,6 +750,17 @@ fig_onset_given_infection_ppv_ma_raw <- ct_probs_ma %>%
 		theme(text=element_text(size=18)) + 
 		labs(x="Mean Ct for 5-unit sliding window", y="Probability of proliferation stage\ngiven acute infection")
 
+# write_csv(ct_probs_ma %>% 
+# 	select(-Chatter) %>%
+# 	mutate(Denom = Onset+Resolution) %>% 
+# 	mutate(Onset = Onset / Denom) %>% 
+# 	mutate(Resolution = Resolution / Denom) %>% 
+# 	select(-Denom) %>%
+# 	mutate(Ct.Change="Raw") %>%
+# 	mutate(Onset_Upr=make_wald_v(Overall_n, Onset, 0.1, "upr")) %>%
+# 	mutate(Onset_Lwr=make_wald_v(Overall_n, Onset, 0.1, "lwr")),
+# 	"figure_data/Fig4/fig4bdat.csv")
+
 fig_onset_given_infection_ppv_ma_paired <- paired_ct_probs_ma %>% 
 	select(-Chatter) %>%
 	mutate(Denom = Onset+Resolution) %>% 
@@ -755,6 +781,15 @@ fig_onset_given_infection_ppv_ma_paired <- paired_ct_probs_ma %>%
 		theme(text=element_text(size=18), legend.position="none") + 
 		labs(x="Mean Ct for 5-unit sliding window", y="Probability of proliferation stage\ngiven acute infection")
 
+# write_csv(paired_ct_probs_ma %>% 
+# 	select(-Chatter) %>%
+# 	mutate(Denom = Onset+Resolution) %>% 
+# 	mutate(Onset = Onset / Denom) %>% 
+# 	mutate(Resolution = Resolution / Denom) %>% 
+# 	select(-Denom) %>%
+# 	mutate(Onset_Upr=make_wald_v(Overall_n, Onset, 0.1, "upr")) %>%
+# 	mutate(Onset_Lwr=make_wald_v(Overall_n, Onset, 0.1, "lwr")),
+# 	"figure_data/Fig4/fig4ddat.csv")
 
 if(current_pars[["symptom_treatment"]]=="split"){
 	fig_ct_trajectory_inference <- make_sample_trajectory_symp(shared_params_df, global_pars)
@@ -797,6 +832,8 @@ eff_se_35 <- unlist(lapply(t_test, get_effective_sensitivity,
     lod=35, se=0.95, inf_ct=inf_ct, maxct=maxct, params_df_slice, event_duration=3/24))
 
 eff_se_df <- tibble(t=-t_test, eff_se_40=eff_se_40, eff_se_35=eff_se_35)
+
+# write_csv(eff_se_df, "figure_data/Fig5/fig5a.csv")
 
 fig_eff_se <- eff_se_df %>% 
 	pivot_longer(-t) %>%
@@ -842,6 +879,8 @@ ninf_35 <- reduce(lapply(t_test, get_n_infectious,
 	mutate(t=-t)
 
 ninf <- rbind(mutate(ninf_40, test="pcr"), mutate(ninf_35, test="rapid"))
+
+write_csv(ninf, "figure_data/Fig5/fig5b.csv")
 
 fig_ninf <- ggplot() + 
 	geom_ribbon(
@@ -891,6 +930,8 @@ eff_se_35 <- unlist(lapply(t_test, get_effective_sensitivity,
 
 eff_se_df <- tibble(t=-t_test, eff_se_40=eff_se_40, eff_se_35=eff_se_35)
 
+# write_csv(eff_se_df, file="figure_data/FigS18/figs18a.csv")
+
 fig_eff_se_ic35 <- eff_se_df %>% 
 	pivot_longer(-t) %>%
 	ggplot(aes(x=t, y=value, col=name)) + 
@@ -935,6 +976,8 @@ ninf_35 <- reduce(lapply(t_test, get_n_infectious,
 	mutate(t=-t)
 
 ninf <- rbind(mutate(ninf_40, test="pcr"), mutate(ninf_35, test="rapid"))
+
+# write_csv(ninf, file="figure_data/FigS18/figs18b.csv")
 
 fig_ninf_ic35 <- ggplot() + 
 	geom_ribbon(
@@ -986,6 +1029,8 @@ eff_se_35 <- unlist(lapply(t_test, get_effective_sensitivity,
 
 eff_se_df <- tibble(t=-t_test, eff_se_40=eff_se_40, eff_se_35=eff_se_35)
 
+# write_csv(eff_se_df, file="figure_data/FigS18/figs18c.csv")
+
 fig_eff_se_ic20 <- eff_se_df %>% 
 	pivot_longer(-t) %>%
 	ggplot(aes(x=t, y=value, col=name)) + 
@@ -1030,6 +1075,8 @@ ninf_35 <- reduce(lapply(t_test, get_n_infectious,
 	mutate(t=-t)
 
 ninf <- rbind(mutate(ninf_40, test="pcr"), mutate(ninf_35, test="rapid"))
+
+write_csv(ninf, file="figure_data/FigS18/figs18d.csv")
 
 fig_ninf_ic20 <- ggplot() + 
 	geom_ribbon(
