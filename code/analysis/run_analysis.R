@@ -69,10 +69,10 @@ source('code/data_parsing/viz_ct_data.R')
 
 # For post-hoc analysis: ======================================================
 # First run up to start of loop, then:
-load(paste0(savedatdir,"/revisions/final_fitlist.RData"))
-parset <- 1
-current_pars <- masterpars[[parset]]
-source('code/analysis/refine_data.R')
-source('code/analysis/fit_posteriors_preamble.R') 
-source('code/analysis/report_results.R')
+# load(paste0(savedatdir,"/revisions/final_fitlist.RData"))
+# parset <- 1
+# current_pars <- masterpars[[parset]]
+# source('code/analysis/refine_data.R')
+# source('code/analysis/fit_posteriors_preamble.R') 
+# source('code/analysis/report_results.R')
 
